@@ -5,7 +5,22 @@
         <v-toolbar color="#a2d0c1">
           <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
-          <h2>รายงานผล LAB COVID-19 จาก PMK</h2>
+          <h2>
+            <v-icon size="30"> mdi-database-clock </v-icon>รายงานผล LAB COVID-19
+            จาก PMK
+          </h2>
+          <v-spacer></v-spacer>
+          <v-btn
+            :loading="loading"
+            x-large
+            class="ma-1"
+            color="#28527a"
+            @click="refresh"
+            align="end"
+            dark
+          >
+            <v-icon medium>mdi-refresh </v-icon>
+          </v-btn>
         </v-toolbar>
         <v-card-text
           ><div>
@@ -46,7 +61,7 @@
       </v-card>
     </v-col>
     <v-dialog v-model="dialog" hide-overlay persistent width="300">
-      <v-card color="#e40017" dark>
+      <v-card color="#f25287" dark>
         <v-card-text>
           กำลังโหลดข้อมูล...
           <v-progress-linear
@@ -74,7 +89,7 @@ export default {
           sortable: false,
         },
         {
-          label: 'เลขบัตรประจำประชาชน',
+          label: 'เลขบัตรประจำตัวประชาชน',
           field: 'ID_CARD',
           sortable: false,
         },
@@ -127,6 +142,9 @@ export default {
           this.rows = response.data
           this.dialog = false
         })
+    },
+    refresh() {
+      this.fetch_lab()
     },
   },
 }

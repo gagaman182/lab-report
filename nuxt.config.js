@@ -47,20 +47,20 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
-        'nuxt-basic-auth-module',
+        // 'nuxt-basic-auth-module',
     ],
     // basic auth
-    basic: {
-        name: 'srrt10682',
-        pass: 'srrt1925',
-        // enabled: process.env.BASIC_ENABLED === 'true',
-        // require boolean value(nullable)
-    },
+    // basic: {
+    //     name: 'srrt10682',
+    //     pass: 'srrt1925',
+    //     // enabled: process.env.BASIC_ENABLED === 'true',
+    //     // require boolean value(nullable)
+    // },
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         //home
-        // baseURL: 'http://localhost/labreport/backend/',
+        //baseURL: 'http://localhost/labreport/backend/',
         // 4.3
         baseURL: 'http://192.168.4.3/webapp/lab-report/backend/',
         //server 5.1

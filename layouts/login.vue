@@ -33,50 +33,10 @@
       <v-icon size="100">mdi-chemical-weapon  </v-icon>
       <span class="display-3"> LAB COVID-19</span>
       <v-spacer></v-spacer>
-     
-    
         <h1> <v-icon size="30" >mdi-calendar-range </v-icon>{{ datenow }}</h1>
         <h1><v-icon size="30">mdi-clock-time-five-outline </v-icon>{{ timenow }}</h1>
     
     </v-system-bar>
-      <v-row
-        ><v-col col="12" md="6">
-          <div>
-            <v-card-title color="orange lighten-2">
-                          ผู้ใช้งานระบบ : <v-chip
-                  class="ma-2"
-                  color="primary"
-                  outlined
-                  pill
-                >
-                  {{ user }} 
-                  <v-icon right>
-                    mdi-account-outline
-                  </v-icon>
-                </v-chip>
-            </v-card-title>
-          </div>
-        </v-col>
-        <v-col col="12" md="6">
-          <div align="end">
-            <!-- <v-btn class="ma-1" color="error" plain x-large @click="logout()">
-              ออกจากระบบ
-            </v-btn> -->
-                <v-btn
-                    class="mx-5"
-                    fab
-                    dark
-                
-                    color="#fa1e0e"
-                    @click="logout()"
-                  >
-                    <v-icon dark>
-                    mdi-logout-variant 
-                    </v-icon>
-              </v-btn>
-          </div>
-        </v-col>
-      </v-row>
     <!-- <v-app-bar :clipped-left="clipped" fixed app> -->
       <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
@@ -140,48 +100,13 @@ export default {
     }
   },
   methods: {
-                pollData () {
-                          this.timerun = setInterval(() => {
-                          this.timenow = new Date().toString().substr(16, 8)
-                          }, 1000)
-                        },
-                         login() {
-                    //check login
-                    this.session = JSON.parse(localStorage.getItem('token'))
-                    //ถ้าไม่มี session จาก ฐานข้อมูลคือไม่ได้ login ให้กลับไปหน้า /login
-                    if (!this.session) {
-                      this.$router.push('/login')
-                    } else {
-                      this.user = this.session[0].fullname
-                      this.token = this.session[0].token
-
-                      if (this.token.length <= 0) {
-                        this.$router.push('/login')
-                      } else {
-                        // login 2 ชม ถ้าเกินให้ออก แล้ว clear localstorage
-                        this.hours = 2
-                        this.saved = localStorage.getItem('saved')
-                        if (
-                          this.saved &&
-                          new Date().getTime() - this.saved > this.hours * 60 * 60 * 1000
-                        ) {
-                          localStorage.clear()
-                          this.$router.push('/login')
-                        }
-                      }
-                    }
-                  },
-                logout() {
-                  localStorage.removeItem('token')
-                  localStorage.clear()
-                  this.$router.push('/login')
-                },
-                        
-            },
-  mounted() {
-              this.pollData()
-                this.login()
-            }
+            pollData () {
+                this.timerun = setInterval(() => {
+                 this.timenow = new Date().toString().substr(16, 8)
+                }, 1000)
+              }
+  },
+    mounted() {this.pollData()}
 }
 </script>
 <style  >
