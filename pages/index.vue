@@ -14,7 +14,7 @@
             :loading="loading"
             x-large
             class="ma-1"
-            color="#28527a"
+            color="#01c5c4"
             @click="refresh"
             align="end"
             dark
@@ -60,6 +60,68 @@
         </v-card-text>
       </v-card>
     </v-col>
+    <v-col cols="12"
+      ><v-card>
+        <v-toolbar color="#a2d0c1">
+          <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
+
+          <h2>
+            <v-icon size="30"> mdi-chart-bell-curve-cumulative </v-icon
+            >กราฟแสดงจำนวนผู้ได้รับการตรวจ COVID-19 ทั้งหมด ต่อวัน(2 สัปดาห์
+            ล่าสุด)
+          </h2>
+          <v-spacer></v-spacer>
+          <!-- <v-btn
+            :loading="loading"
+            x-large
+            class="ma-1"
+            color="#28527a"
+            @click="refresh"
+            align="end"
+            dark
+          >
+            <v-icon medium>mdi-refresh </v-icon>
+          </v-btn> --> </v-toolbar
+        ><chart_line
+          v-if="loadlineday"
+          :lineday_datetime="lineday_datetime"
+          :lineday_no_covid="lineday_no_covid"
+          :lineday_yes_covid="lineday_yes_covid"
+          :lineday_all_covid="lineday_all_covid"
+        ></chart_line
+      ></v-card>
+    </v-col>
+    <v-col cols="12"
+      ><v-card>
+        <v-toolbar color="#a2d0c1">
+          <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
+
+          <h2>
+            <v-icon size="30"> mdi-chart-box </v-icon
+            >กราฟแสดงจำนวนผู้ได้รับการตรวจ COVID-19 แสดงตามผลการตรวจ ต่อวัน (2
+            สัปดาห์ ล่าสุด)
+          </h2>
+          <v-spacer></v-spacer>
+          <!-- <v-btn
+            :loading="loading"
+            x-large
+            class="ma-1"
+            color="#28527a"
+            @click="refresh"
+            align="end"
+            dark
+          >
+            <v-icon medium>mdi-refresh </v-icon>
+          </v-btn> --> </v-toolbar
+        ><chart_bar
+          v-if="loadlineday"
+          :lineday_datetime="lineday_datetime"
+          :lineday_no_covid="lineday_no_covid"
+          :lineday_yes_covid="lineday_yes_covid"
+          :lineday_all_covid="lineday_all_covid"
+        ></chart_bar
+      ></v-card>
+    </v-col>
     <v-dialog v-model="dialog" hide-overlay persistent width="300">
       <v-card color="#f25287" dark>
         <v-card-text>
@@ -77,8 +139,11 @@
 
 <script>
 import axios from 'axios'
+
+import chart_line from '~/components/chart_line.vue'
+import chart_bar from '~/components/chart_bar.vue'
 export default {
-  components: {},
+  components: { chart_line, chart_bar },
   data() {
     return {
       dialog: false,
@@ -126,10 +191,17 @@ export default {
         },
       ],
       rows: [],
+      lineday: '',
+      lineday_datetime: '',
+      lineday_no_covid: '',
+      lineday_yes_covid: '',
+      loadlineday: false,
+      lineday_all_covid: '',
     }
   },
   mounted() {
     this.fetch_lab()
+    this.chart_line()
   },
   methods: {
     //ตาราง เสียชีวิตราย ward
@@ -145,6 +217,22 @@ export default {
     },
     refresh() {
       this.fetch_lab()
+      this.chart_line()
+    },
+
+    //chart line
+    async chart_line() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}chart_line_month.php`)
+        .then((response) => {
+          this.loadlineday = true
+          this.lineday = response.data
+
+          this.lineday_datetime = this.lineday.map((item) => item.datetime)
+          this.lineday_no_covid = this.lineday.map((item) => item.no_covid)
+          this.lineday_yes_covid = this.lineday.map((item) => item.yes_covid)
+          this.lineday_all_covid = this.lineday.map((item) => item.all_covid)
+        })
     },
   },
 }
