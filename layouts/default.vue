@@ -39,8 +39,25 @@
         <h1><v-icon size="30">mdi-clock-time-five-outline </v-icon>{{ timenow }}</h1>
     
     </v-system-bar>
-      <v-row
-        ><v-col col="12" md="6">
+   
+   
+
+     
+        <v-col col="12" md="12">
+           <v-btn text>
+       <NuxtLink to="/">LAB</NuxtLink>
+    </v-btn>
+    <v-btn
+      text
+      color="primary"
+    >
+     <NuxtLink to="/add-code">CODE</NuxtLink>
+    </v-btn>
+     </v-col>
+    <v-row
+      >
+         
+        <v-col col="12" md="6">
           <div>
             <v-card-title color="orange lighten-2">
                           ผู้ใช้งานระบบ : <v-chip

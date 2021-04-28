@@ -10,14 +10,14 @@
 // $servername = "localhost";
 // $username = "root";
 // $password = "123456789";
-// $dbname = "contact-covid";
+// $dbname = "lab-covid";
 // $port = "3306";
 
 // hospital
 $servername = "192.168.4.3";
 $username = "root";
 $password = "1234";
-$dbname = "contact-covid";
+$dbname = "lab-covid";
  $port = "3306";
 
 
