@@ -12,7 +12,10 @@ $data=array();
 
 $strSQL  = "SELECT
 prename,
-name
+name,
+SURNAME as surname,
+name ||' '|| SURNAME as fullname,
+mobile as tel 
 FROM
 PATIENTS
 where HN like  '".$hn."'
@@ -28,6 +31,9 @@ while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
 
 	$a['prename']=$rs_pmk[0];
 	$a['name']=$rs_pmk[1];
+	$a['surname']=$rs_pmk[2];
+	$a['fullname']=$rs_pmk[3];
+	$a['tel']=$rs_pmk[4];
 
 	
 	

@@ -50,6 +50,7 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
+        'vue-sweetalert2/nuxt',
         // 'nuxt-basic-auth-module',
     ],
     // basic auth
