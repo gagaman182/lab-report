@@ -5,11 +5,21 @@
         <v-toolbar color="#845ec2" dark>
           <h2><v-icon size="30"> mdi-barcode-scan </v-icon> ออกผล SAT CODE</h2>
           <v-spacer></v-spacer>
-
+          <v-btn
+            v-if="show_status_edit"
+            @click="add_edit_clear"
+            depressed
+            color="#007580"
+          >
+            ยกเลิก
+          </v-btn>
           <v-chip v-if="show_status_ok" class="ma-2 h2" color="#00adb5">{{
             hn_status
           }}</v-chip>
           <v-chip v-if="show_status_no" class="ma-2 h2" color="#e84545">{{
+            hn_status
+          }}</v-chip>
+          <v-chip v-if="show_status_edit" class="ma-2 h2" color="#e48900">{{
             hn_status
           }}</v-chip>
         </v-toolbar>
@@ -17,13 +27,14 @@
           <v-row>
             <v-col cols="12" md="4"
               ><v-text-field
+                ref="hn"
                 :background-color="tb_bg_color"
                 label="HN"
                 v-model="hn"
                 outlined
                 x-large
-                @change="hn_detail()"
-                class="display-1"
+                @keyup.enter="hn_detail()"
+                class="headline"
               ></v-text-field>
             </v-col>
 
@@ -33,7 +44,7 @@
                 v-model="prename"
                 outlined
                 x-large
-                class="display-1"
+                class="headline"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="4"
@@ -42,7 +53,7 @@
                 v-model="fullname"
                 outlined
                 x-large
-                class="display-1"
+                class="headline"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -53,7 +64,7 @@
                 v-model="tel"
                 outlined
                 x-large
-                class="display-1"
+                class="headline"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="8"
@@ -62,7 +73,7 @@
                 v-model="risk"
                 outlined
                 x-large
-                class="display-1"
+                class="headline"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -74,8 +85,8 @@
                 outlined
                 x-large
                 counter="5"
-                class="display-1"
-                @change="change_code"
+                class="headline"
+                @keyup.enter="change_code"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="2"
@@ -86,8 +97,8 @@
                 x-large
                 counter="1"
                 @keyup="uppercase"
-                @change="change_code"
-                class="display-1"
+                @keyup.enter="change_code"
+                class="headline"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="2"
@@ -97,8 +108,8 @@
                 outlined
                 x-large
                 counter="6"
-                class="display-1"
-                @change="change_code"
+                class="headline"
+                @keyup.enter="change_code"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="2"
@@ -107,10 +118,10 @@
                 v-model="name_code"
                 outlined
                 x-large
-                class="code display-1"
+                class="code headline"
                 counter="2"
                 @keyup="uppercase"
-                @change="change_code"
+                @keyup.enter="change_code"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="2"
@@ -120,18 +131,27 @@
                 outlined
                 x-large
                 counter="4"
-                class="display-1"
-                @change="change_code"
+                class="headline"
+                @keyup.enter="change_code"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="2"
-              ><v-text-field
+            <v-col cols="12" md="2">
+              <!-- <v-text-field
                 label="อื่นๆ"
                 v-model="other"
                 outlined
                 x-large
                 class="display-1"
-              ></v-text-field>
+              ></v-text-field> -->
+              <v-select
+                :items="items"
+                v-model="other"
+                :menu-props="{ top: true, offsetY: true }"
+                label="ช่วงเวลา"
+                outlined
+                x-large
+                class="headline"
+              ></v-select>
             </v-col>
           </v-row>
           <v-row>
@@ -152,6 +172,28 @@
                 <v-icon size="40"> mdi-account-plus-outline </v-icon>
                 &nbsp;เพิ่มข้อมูล
               </v-btn>
+              <v-btn
+                v-if="show_status_edit"
+                color="#e48900"
+                x-large
+                dark
+                class="display-1"
+                @click="update_satcode"
+              >
+                <v-icon size="40"> mdi-account-edit-outline </v-icon>
+                &nbsp;แก้ไขข้อมูล
+              </v-btn>
+              <v-btn
+                v-if="show_status_edit"
+                color="#e84545"
+                x-large
+                dark
+                class="display-1"
+                @click="delete_satcode"
+              >
+                <v-icon size="40"> mdi-account-remove-outline </v-icon>
+                &nbsp;ลบข้อมูล
+              </v-btn>
             </v-col>
             <v-col cols="12" md="6" align="center">
               <p class="headline text-decoration-underline">วันที่ส่งตรวจ</p>
@@ -166,6 +208,9 @@
         </v-card-text>
       </v-card>
     </v-col>
+    <v-col cols="12"
+      ><table_satcode ref="resatcode" @getid="fecth_edit"></table_satcode>
+    </v-col>
   </v-row>
 </template>
 
@@ -174,8 +219,9 @@ import axios from 'axios'
 
 // import chart_line from '~/components/chart_line.vue'
 // import chart_bar from '~/components/chart_bar.vue'
+import table_satcode from '~/components/table_satcode.vue'
 export default {
-  components: {},
+  components: { table_satcode },
   data() {
     return {
       hn: '',
@@ -183,6 +229,7 @@ export default {
       hn_status: '',
       show_status_ok: false,
       show_status_no: false,
+      show_status_edit: false,
       show_satcode: false,
       prename: '',
       fullname: '',
@@ -204,6 +251,9 @@ export default {
       namefinal: '',
       btnshow: false,
       message: '',
+      items: ['เช้า', 'บ่าย'],
+      edit_satcode: '',
+      id_edit: '',
     }
   },
   mounted() {
@@ -260,6 +310,7 @@ export default {
               this.tb_bg_color = '#00adb5'
               this.show_status_ok = true
               this.show_status_no = false
+              this.show_status_edit = false
               this.show_satcode = true
 
               this.prename = this.hn_check[0].prename
@@ -285,6 +336,7 @@ export default {
               this.tb_bg_color = '#ff5e78'
               this.show_status_ok = false
               this.show_status_no = true
+              this.show_status_edit = false
               this.show_satcode = true
               axios
                 .get(`${this.$axios.defaults.baseURL}search_hn.php`, {
@@ -500,6 +552,7 @@ export default {
       this.fullname = ''
       this.tel = ''
       this.risk = ''
+      this.satcode = ''
       this.hoscode = '10682'
       this.type_code = 'A'
       this.day_code = ''
@@ -509,6 +562,7 @@ export default {
       this.dateadd = new Date().toISOString().substr(0, 10)
       this.show_status_ok = false
       this.show_status_no = false
+      this.show_status_edit = false
       this.tb_bg_color = ''
       this.day_code =
         new Date().toISOString().substr(8, 2) +
@@ -522,6 +576,7 @@ export default {
       this.fullname = ''
       this.tel = ''
       this.risk = ''
+      this.satcode = ''
       this.hoscode = '10682'
       this.type_code = 'A'
       this.day_code = ''
@@ -531,6 +586,7 @@ export default {
       this.dateadd = new Date().toISOString().substr(0, 10)
       this.show_status_ok = false
       this.show_status_no = false
+      this.show_status_edit = false
       this.tb_bg_color = ''
       this.day_code =
         new Date().toISOString().substr(8, 2) +
@@ -539,8 +595,39 @@ export default {
       this.other = ''
       this.satcode = ''
       this.btnshow = false
+      //เลื่อนลง
     },
-
+    add_edit_clear() {
+      this.hn = ''
+      this.prename = ''
+      this.fullname = ''
+      this.tel = ''
+      this.risk = ''
+      this.satcode = ''
+      this.hoscode = '10682'
+      this.type_code = 'A'
+      this.day_code = ''
+      this.name_code = ''
+      this.number_code = ''
+      this.hn_status = ''
+      this.dateadd = new Date().toISOString().substr(0, 10)
+      this.show_status_ok = false
+      this.show_status_no = false
+      this.show_status_edit = false
+      this.tb_bg_color = ''
+      this.day_code =
+        new Date().toISOString().substr(8, 2) +
+        new Date().toISOString().substr(5, 2) +
+        new Date().toISOString().substr(2, 2)
+      this.other = ''
+      this.btnshow = false
+      //เลื่อนลง
+      window.scrollTo({
+        top: 1200,
+        left: 50,
+        behavior: 'smooth',
+      })
+    },
     uppercase() {
       this.name_code = this.name_code.toUpperCase()
       this.type_code = this.type_code.toUpperCase()
@@ -580,7 +667,8 @@ export default {
               icon: 'success',
               confirmButtonText: 'ตกลง',
             })
-            this.clear()
+            this.$refs.resatcode.fetch_satcode()
+            this.add_edit_clear()
           } else {
             this.$swal({
               title: 'การเพิ่มข้อมูล',
@@ -590,6 +678,136 @@ export default {
             })
           }
         })
+    },
+    //แก้ไข satcode รับค่ามาจาก component ลูก
+    async fecth_edit(value) {
+      this.id_edit = value
+      this.hn_status = 'แก้ไขโค้ด'
+      this.tb_bg_color = '#e48900'
+      this.show_status_ok = false
+      this.show_status_no = false
+      this.show_status_edit = true
+      await axios
+        .post(`${this.$axios.defaults.baseURL}edit_satcode.php`, {
+          id: this.id_edit,
+        })
+        .then((response) => {
+          this.edit_satcode = response.data
+          this.hn = this.edit_satcode[0].hn
+          this.prename = this.edit_satcode[0].prename
+          this.fullname = this.edit_satcode[0].fullname
+          this.tel = this.edit_satcode[0].tel
+          this.risk = this.edit_satcode[0].risk
+          this.satcode = this.edit_satcode[0].satcode
+          this.type_code = this.edit_satcode[0].type_code
+          this.day_code = this.edit_satcode[0].day_code
+          this.name_code = this.edit_satcode[0].name_code
+          this.number_code = this.edit_satcode[0].number_code
+          this.other = this.edit_satcode[0].other
+          this.dateadd = this.edit_satcode[0].dateadd
+        })
+    },
+    //แก้ไข satcode
+
+    async update_satcode() {
+      await axios
+        .put(`${this.$axios.defaults.baseURL}update_satcode.php`, {
+          id: this.id_edit,
+          hn: this.hn,
+          prename: this.prename,
+          fullname: this.fullname,
+          tel: this.tel,
+          risk: this.risk,
+          satcode: this.satcode,
+          type_code: this.type_code,
+          day_code: this.day_code,
+          name_code: this.name_code,
+          number_code: this.number_code,
+          other: this.other,
+          dateadd: this.dateadd,
+        })
+        .then((response) => {
+          this.message = response.data
+          if (this.message[0].message === 'แก้ไขข้อมูลสำเร็จ') {
+            this.$swal({
+              title: 'สถานะการแก้ไข',
+              text: this.message[0].message,
+              icon: 'success',
+              confirmButtonText: 'ตกลง',
+            })
+            this.add_edit_clear()
+            this.$refs.resatcode.fetch_satcode()
+          } else {
+            this.$swal({
+              title: 'สถานะการแก้ไข',
+              text: this.message[0].message,
+              icon: 'error',
+              confirmButtonText: 'ตกลง',
+            })
+          }
+        })
+    },
+    //ลบ satcode
+    delete_satcode() {
+      if (!this.id_edit) {
+        this.$swal({
+          title: 'แจ้งเตือน',
+          text: 'ไม่พบข้อมูล',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        })
+      } else {
+        this.$swal({
+          title: 'คุณแน่ใจว่าต้องการลบข้อมูลนี้?',
+          text: 'hn: ' + this.hn + ' ' + 'ชื่อ:' + this.fullname,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#51adcf',
+          cancelButtonColor: '#686d76',
+          confirmButtonText: 'ลบ',
+          cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            axios
+              .put(`${this.$axios.defaults.baseURL}delete_satcode.php`, {
+                id: this.id_edit,
+              })
+              .then((response) => {
+                this.message = response.data
+
+                if (this.message[0].message === 'ลบข้อมูลสำเร็จ') {
+                  this.$swal({
+                    title: 'สถานะการลบ',
+                    text: this.message[0].message,
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง',
+                  })
+                  this.add_edit_clear()
+                  this.$refs.resatcode.fetch_satcode()
+                } else {
+                  this.$swal({
+                    title: 'สถานะการลบ',
+                    text: this.message[0].message,
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง',
+                  })
+                }
+              })
+          }
+        })
+      }
+    },
+    move_up_add() {
+      //reset ก่อน
+      this.add_edit_clear()
+      //ให้ mouse focus ไปที่ช่อง textfield hn บรรทัดที่ 30
+      this.$refs.hn.focus()
+      //เลื่อนขึ้น
+      window.scrollTo({
+        top: 100,
+        left: 100,
+        behavior: 'smooth',
+      })
     },
   },
 }
