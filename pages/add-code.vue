@@ -1,227 +1,278 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <v-card class="mx-auto">
-        <v-toolbar color="#845ec2" dark>
-          <h2><v-icon size="30"> mdi-barcode-scan </v-icon> ออกผล SAT CODE</h2>
-          <v-spacer></v-spacer>
-          <v-btn
-            v-if="show_status_edit"
-            @click="add_edit_clear"
-            depressed
-            color="#007580"
-          >
-            ยกเลิก
-          </v-btn>
-          <v-chip v-if="show_status_ok" class="ma-2 h2" color="#00adb5">{{
-            hn_status
-          }}</v-chip>
-          <v-chip v-if="show_status_no" class="ma-2 h2" color="#e84545">{{
-            hn_status
-          }}</v-chip>
-          <v-chip v-if="show_status_edit" class="ma-2 h2" color="#e48900">{{
-            hn_status
-          }}</v-chip>
-        </v-toolbar>
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" md="4"
-              ><v-text-field
-                ref="hn"
-                :background-color="tb_bg_color"
-                label="HN"
-                v-model="hn"
-                outlined
-                x-large
-                @keyup.enter="hn_detail()"
-                class="headline"
-              ></v-text-field>
-            </v-col>
+  <v-card>
+    <v-tabs v-model="tab" background-color="#9fb8ad">
+      <v-tab v-for="item in item_tab" :key="item.tab">
+        <v-icon size="30">{{ item.icon }}</v-icon
+        >&nbsp;
+        <h2>{{ item.tab }}</h2>
+      </v-tab>
+    </v-tabs>
 
-            <v-col cols="12" md="4"
-              ><v-text-field
-                label="คำนำหน้าชื่อ"
-                v-model="prename"
-                outlined
-                x-large
-                class="headline"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4"
-              ><v-text-field
-                label="ชื่อ-นามสกุล"
-                v-model="fullname"
-                outlined
-                x-large
-                class="headline"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="4"
-              ><v-text-field
-                label="เบอร์โทรศัพท์"
-                v-model="tel"
-                outlined
-                x-large
-                class="headline"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="8"
-              ><v-text-field
-                label="ประวัติความเสี่ยง"
-                v-model="risk"
-                outlined
-                x-large
-                class="headline"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="2"
-              ><v-text-field
-                label="โรงพยาบาล"
-                v-model="hoscode"
-                outlined
-                x-large
-                counter="5"
-                class="headline"
-                @keyup.enter="change_code"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="2"
-              ><v-text-field
-                label="ประเภท"
-                v-model="type_code"
-                outlined
-                x-large
-                counter="1"
-                @keyup="uppercase"
-                @keyup.enter="change_code"
-                class="headline"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="2"
-              ><v-text-field
-                label="วันที่"
-                v-model="day_code"
-                outlined
-                x-large
-                counter="6"
-                class="headline"
-                @keyup.enter="change_code"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="2"
-              ><v-text-field
-                label="อักษรตัวแรก"
-                v-model="name_code"
-                outlined
-                x-large
-                class="code headline"
-                counter="2"
-                @keyup="uppercase"
-                @keyup.enter="change_code"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="2"
-              ><v-text-field
-                label="ลำดับ"
-                v-model="number_code"
-                outlined
-                x-large
-                counter="4"
-                class="headline"
-                @keyup.enter="change_code"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="2">
-              <!-- <v-text-field
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <v-col cols="12">
+              <v-card class="mx-auto">
+                <v-toolbar color="#845ec2" dark>
+                  <h2>
+                    <v-icon size="30"> mdi-barcode-scan </v-icon> ออกผล SAT CODE
+                  </h2>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    v-if="show_status_edit"
+                    @click="add_edit_clear"
+                    depressed
+                    color="#007580"
+                  >
+                    ยกเลิก
+                  </v-btn>
+                  <v-chip
+                    v-if="show_status_ok"
+                    class="ma-2 h2"
+                    color="#00adb5"
+                    >{{ hn_status }}</v-chip
+                  >
+                  <v-chip
+                    v-if="show_status_no"
+                    class="ma-2 h2"
+                    color="#e84545"
+                    >{{ hn_status }}</v-chip
+                  >
+                  <v-chip
+                    v-if="show_status_edit"
+                    class="ma-2 h2"
+                    color="#e48900"
+                    >{{ hn_status }}</v-chip
+                  >
+                </v-toolbar>
+                <v-card-text>
+                  <v-row>
+                    <v-col cols="12" md="4"
+                      ><v-text-field
+                        ref="hn"
+                        :background-color="tb_bg_color"
+                        label="HN"
+                        v-model="hn"
+                        outlined
+                        x-large
+                        @keyup.enter="hn_detail()"
+                        class="headline"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="12" md="4"
+                      ><v-text-field
+                        label="คำนำหน้าชื่อ"
+                        v-model="prename"
+                        outlined
+                        x-large
+                        class="headline"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4"
+                      ><v-text-field
+                        label="ชื่อ-นามสกุล"
+                        v-model="fullname"
+                        outlined
+                        x-large
+                        class="headline"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" md="4"
+                      ><v-text-field
+                        label="เบอร์โทรศัพท์"
+                        v-model="tel"
+                        outlined
+                        x-large
+                        class="headline"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="8"
+                      ><v-text-field
+                        label="ประวัติความเสี่ยง"
+                        v-model="risk"
+                        outlined
+                        x-large
+                        class="headline"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" md="2"
+                      ><v-text-field
+                        label="โรงพยาบาล"
+                        v-model="hoscode"
+                        outlined
+                        x-large
+                        counter="5"
+                        class="headline"
+                        @keyup.enter="change_code"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="2"
+                      ><v-text-field
+                        label="ประเภท"
+                        v-model="type_code"
+                        outlined
+                        x-large
+                        counter="1"
+                        @keyup="uppercase"
+                        @keyup.enter="change_code"
+                        class="headline"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="2"
+                      ><v-text-field
+                        label="วันที่"
+                        v-model="day_code"
+                        outlined
+                        x-large
+                        counter="6"
+                        class="headline"
+                        @keyup.enter="change_code"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="2"
+                      ><v-text-field
+                        label="อักษรตัวแรก"
+                        v-model="name_code"
+                        outlined
+                        x-large
+                        class="code headline"
+                        counter="2"
+                        @keyup="uppercase"
+                        @keyup.enter="change_code"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="2"
+                      ><v-text-field
+                        label="ลำดับ"
+                        v-model="number_code"
+                        outlined
+                        x-large
+                        counter="4"
+                        class="headline"
+                        @keyup.enter="change_code"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="2">
+                      <!-- <v-text-field
                 label="อื่นๆ"
                 v-model="other"
                 outlined
                 x-large
                 class="display-1"
               ></v-text-field> -->
-              <v-select
-                :items="items"
-                v-model="other"
-                :menu-props="{ top: true, offsetY: true }"
-                label="ช่วงเวลา"
-                outlined
-                x-large
-                class="headline"
-              ></v-select>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="6" align="center">
-              <p class="headline text-decoration-underline">SAT CODE</p>
-              <p class="display-2 blue--text">
-                {{ satcode }}
-              </p>
+                      <v-select
+                        :items="items"
+                        v-model="other"
+                        :menu-props="{ top: true, offsetY: true }"
+                        label="ช่วงเวลา"
+                        outlined
+                        x-large
+                        class="headline"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" md="6" align="center">
+                      <p class="headline text-decoration-underline">SAT CODE</p>
+                      <p class="display-2 blue--text">
+                        {{ satcode }}
+                      </p>
 
-              <v-btn
-                v-if="btnshow"
-                color="#29bb89"
-                x-large
-                dark
-                class="display-1"
-                @click="add_satcode"
-              >
-                <v-icon size="40"> mdi-account-plus-outline </v-icon>
-                &nbsp;เพิ่มข้อมูล
-              </v-btn>
-              <v-btn
-                v-if="show_status_edit"
-                color="#e48900"
-                x-large
-                dark
-                class="display-1"
-                @click="update_satcode"
-              >
-                <v-icon size="40"> mdi-account-edit-outline </v-icon>
-                &nbsp;แก้ไขข้อมูล
-              </v-btn>
-              <v-btn
-                v-if="show_status_edit"
-                color="#e84545"
-                x-large
-                dark
-                class="display-1"
-                @click="delete_satcode"
-              >
-                <v-icon size="40"> mdi-account-remove-outline </v-icon>
-                &nbsp;ลบข้อมูล
-              </v-btn>
+                      <v-btn
+                        v-if="btnshow"
+                        color="#29bb89"
+                        x-large
+                        dark
+                        class="display-1"
+                        @click="add_satcode"
+                      >
+                        <v-icon size="40"> mdi-account-plus-outline </v-icon>
+                        &nbsp;เพิ่มข้อมูล
+                      </v-btn>
+                      <v-btn
+                        v-if="show_status_edit"
+                        color="#e48900"
+                        x-large
+                        dark
+                        class="display-1"
+                        @click="update_satcode"
+                      >
+                        <v-icon size="40"> mdi-account-edit-outline </v-icon>
+                        &nbsp;แก้ไขข้อมูล
+                      </v-btn>
+                      <v-btn
+                        v-if="show_status_edit"
+                        color="#e84545"
+                        x-large
+                        dark
+                        class="display-1"
+                        @click="delete_satcode"
+                      >
+                        <v-icon size="40"> mdi-account-remove-outline </v-icon>
+                        &nbsp;ลบข้อมูล
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="6" align="center">
+                      <p class="headline text-decoration-underline">
+                        วันที่ส่งตรวจ
+                      </p>
+                      <v-date-picker
+                        v-model="dateadd"
+                        readonly
+                        locale="th-TH"
+                        color="#ea97ad"
+                      ></v-date-picker>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
             </v-col>
-            <v-col cols="12" md="6" align="center">
-              <p class="headline text-decoration-underline">วันที่ส่งตรวจ</p>
-              <v-date-picker
-                v-model="dateadd"
-                readonly
-                locale="th-TH"
-                color="#ea97ad"
-              ></v-date-picker>
+            <!-- prop function คือ จาก แม่ไปลูก
+            จากลูกไปแม่ใช่ส่ง ref -->
+            <v-col cols="12"
+              ><table_satcode
+                ref="resatcode"
+                :move_up_add="move_up_add"
+                :reset_child_all="reset_child_all"
+                @getid="fecth_edit"
+              ></table_satcode>
             </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12"
-      ><table_satcode ref="resatcode" @getid="fecth_edit"></table_satcode>
-    </v-col>
-  </v-row>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <!-- prop function คือ จาก แม่ไปลูก
+            จากลูกไปแม่ใช่ส่ง ref -->
+            <table_all
+              ref="resatcodeall"
+              :reset_child="reset_child"
+              @getid="fecth_edit"
+            ></table_all>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-card>
 </template>
 
 <script>
 import axios from 'axios'
 
-// import chart_line from '~/components/chart_line.vue'
-// import chart_bar from '~/components/chart_bar.vue'
 import table_satcode from '~/components/table_satcode.vue'
+import table_all from '~/components/table_all.vue'
 export default {
-  components: { table_satcode },
+  components: {
+    table_satcode,
+    table_all,
+  },
   data() {
     return {
       hn: '',
@@ -254,6 +305,11 @@ export default {
       items: ['เช้า', 'บ่าย'],
       edit_satcode: '',
       id_edit: '',
+      tab: '',
+      item_tab: [
+        { tab: 'เพิ่มSATCODE', icon: 'mdi-barcode-scan' },
+        { tab: 'SATCODEทั้งหมด', icon: 'mdi-card-account-details-outline' },
+      ],
     }
   },
   mounted() {
@@ -737,6 +793,7 @@ export default {
             })
             this.add_edit_clear()
             this.$refs.resatcode.fetch_satcode()
+            this.$refs.resatcodeall.fetch_satcode()
           } else {
             this.$swal({
               title: 'สถานะการแก้ไข',
@@ -784,6 +841,7 @@ export default {
                   })
                   this.add_edit_clear()
                   this.$refs.resatcode.fetch_satcode()
+                  this.move_up_add()
                 } else {
                   this.$swal({
                     title: 'สถานะการลบ',
@@ -808,6 +866,13 @@ export default {
         left: 100,
         behavior: 'smooth',
       })
+    },
+    //สั่ง methed จาก child to parent แล้วจาก parent to childต่อ
+    reset_child() {
+      this.$refs.resatcode.fetch_satcode()
+    },
+    reset_child_all() {
+      this.$refs.resatcodeall.fetch_satcode()
     },
   },
 }

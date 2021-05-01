@@ -27,6 +27,7 @@ if (mysqli_num_rows($runcheck) > 0)
 	$row_array['message'] = 'ยืนยันตัวตนถูกต้อง';
 	$row_array['state'] = 'ok';
 	$row_array['fullname'] =  $row['fullname'];
+	$row_array['type'] =  $row['type'];
 	array_push($return_arr,$row_array);
 	}
 }else{

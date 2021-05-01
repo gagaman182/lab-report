@@ -35,6 +35,7 @@ export default {
     plugins: [
         { src: '~/plugins/vue-good-table', ssr: false },
         '@/plugins/apexcharts.js',
+        '@/plugins/vueexcel',
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components

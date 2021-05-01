@@ -30,74 +30,35 @@
       window
    
     >
-      <v-icon size="100">mdi-chemical-weapon  </v-icon>
-      <span class="display-3"> LAB COVID-19</span>
-      <v-spacer></v-spacer>
-     
-    
-        <h1> <v-icon size="30" >mdi-calendar-range </v-icon>{{ datenow }}</h1>
-        <h1><v-icon size="30">mdi-clock-time-five-outline </v-icon>{{ timenow }}</h1>
+      <v-icon size="100">mdi-barcode-scan  </v-icon>
+      <span class="display-3"> ข้อมูลรายชื่อผู้ออกโค้ดเพื่อสวอป </span>
+      
+      
     
     </v-system-bar>
    
    
-  <v-btn-toggle
-        v-model="text"
-        tile
-        color="deep-purple accent-3"
-        group
-      >
-        <v-btn value="left" class="display-1"  >
-          <NuxtLink to="/">รายงานผล LAB </NuxtLink>
-        </v-btn>
-
-        <v-btn value="center" class="display-1">
-       <NuxtLink to="/add-code"> ออกผล SATCODE</NuxtLink>
-        </v-btn>
-
-        
-      </v-btn-toggle>
-     
+ 
        
-    <v-row>
-         
-        <v-col col="12" md="6">
-          <div>
+  
+       
             <v-card-title color="orange lighten-2">
-                          ผู้ใช้งานระบบ : <v-chip
-                  class="ma-2"
-                  color="#fa1e0e"
-                  outlined
-                  pill
-                >
+                          ผู้ใช้งานระบบ : 
                   {{ user }} 
-                  <v-icon right>
-                    mdi-account-outline
-                  </v-icon>
-                </v-chip>
-            </v-card-title>
-          </div>
-        </v-col>
-        <v-col col="12" md="6">
-          <div align="end">
-            <!-- <v-btn class="ma-1" color="error" plain x-large @click="logout()">
+                 
+             
+                 <v-btn class="ma-1" color="error" plain x-large @click="logout()">
               ออกจากระบบ
-            </v-btn> -->
-                <v-btn
-                    class="mx-5"
-                    fab
-                    dark
-                
-                    color="#fa1e0e"
-                    @click="logout()"
-                  >
-                    <v-icon dark>
-                    mdi-logout-variant 
-                    </v-icon>
-              </v-btn>
-          </div>
-        </v-col>
-      </v-row>
+            </v-btn>
+            </v-card-title>
+      
+    
+      
+         
+           
+             
+         
+    
     <!-- <v-app-bar :clipped-left="clipped" fixed app> -->
       <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
@@ -140,6 +101,7 @@
 export default {
   data() {
     return {
+        user:'',
        datenow: new Date().toLocaleString().substr(0, 10),
       timenow:'',
       timerun:'',
@@ -148,15 +110,11 @@ export default {
       fixed: true,
       items: [
         {
-          icon: 'mdi-chemical-weapon',
-          title: 'lab',
-          to: '/',
+          icon: ' mdi-card-account-details-outline',
+          title: 'ic',
+          to: '/ic-view',
         },
-        {
-          icon: 'mdi-barcode-scan ',
-          title: 'satcode',
-          to: '/add-code',
-        },
+     
         
       ],
       miniVariant: true,
@@ -175,9 +133,10 @@ export default {
                     //check login
                     this.session = JSON.parse(localStorage.getItem('token'))
                     //ถ้าไม่มี session จาก ฐานข้อมูลคือไม่ได้ login ให้กลับไปหน้า /login
-                    if (this.session[0].type !== 'srrt') {
+                    if (this.session[0].type !== 'ic') {
                       this.$router.push('/login')
                     } else {
+                     
                       this.user = this.session[0].fullname
                       this.token = this.session[0].token
 

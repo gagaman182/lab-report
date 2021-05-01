@@ -9,15 +9,25 @@
     </v-toolbar>
 
     <v-card-text>
-      <v-col>
+      <v-col cols="12">
         <v-btn
           color="#29bb89"
           x-large
           dark
-          class="display-1"
+          class="display-1 mx-2"
           @click="call_parent"
         >
           <v-icon size="40"> mdi-account-plus-outline </v-icon>
+          &nbsp; </v-btn
+        ><v-btn
+          mx-4
+          color="#ffdf6b"
+          x-large
+          dark
+          class="display-1"
+          @click="mark_y"
+        >
+          <v-icon size="40"> mdi-file-upload-outline </v-icon>
           &nbsp;
         </v-btn></v-col
       >
@@ -47,10 +57,10 @@ import axios from 'axios'
 export default {
   components: {},
 
-  props: {},
+  props: ['move_up_add', 'reset_child_all'],
 
   data: () => ({
-    datenow: new Date().toLocaleString().substr(0, 9),
+    datenow: new Date().toLocaleString().substr(0, 8),
     satcode_day: [],
     columns: [
       {
@@ -100,6 +110,7 @@ export default {
       },
     ],
     idemit: '',
+    message: '',
   }),
   mounted() {
     this.fetch_satcode()
@@ -124,7 +135,33 @@ export default {
     },
     //call parent  method
     call_parent() {
-      this.$parent.move_up_add()
+      this.move_up_add()
+    },
+    // mark y
+    async mark_y() {
+      await axios
+        .put(`${this.$axios.defaults.baseURL}update_satcode_y.php`)
+        .then((response) => {
+          this.message = response.data
+          if (this.message[0].message === 'อัพโหลดข้อมูลสำเร็จ') {
+            this.$swal({
+              title: 'สถานะการอัพโหลด',
+              text: this.message[0].message,
+              icon: 'success',
+              confirmButtonText: 'ตกลง',
+            })
+
+            this.fetch_satcode()
+            this.reset_child_all()
+          } else {
+            this.$swal({
+              title: 'สถานะการอัพโหลด',
+              text: this.message[0].message,
+              icon: 'error',
+              confirmButtonText: 'ตกลง',
+            })
+          }
+        })
     },
   },
 }

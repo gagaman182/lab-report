@@ -94,7 +94,11 @@ export default {
 
             this.$router.push('/login')
           } else {
-            this.$router.push('/')
+            if (this.token[0].type == 'srrt') {
+              this.$router.push('/')
+            } else {
+              this.$router.push('/ic-view')
+            }
           }
         })
     },
