@@ -13,7 +13,7 @@
               <v-icon size="30">mdi-refresh-circle </v-icon>
             </v-btn>
             <v-btn color="#51c4d3" dark x-large
-              ><export-excel :data="desserts_thai">
+              ><export-excel :data="excel_thai">
                 <v-icon size="30">mdi-file-excel </v-icon>
               </export-excel>
             </v-btn>
@@ -123,7 +123,8 @@ export default {
   }),
   mounted() {
     this.fetch_satcode()
-    this.refresh_settimeout()
+    // this.refresh_settimeout()
+    this.fecth_satcode_excel()
   },
   methods: {
     async fetch_satcode() {
@@ -150,11 +151,11 @@ export default {
     refresh() {
       this.fetch_satcode()
     },
-    refresh_settimeout() {
-      setInterval(function () {
-        this.fetch_satcode()
-      }, 1000)
-    },
+    // refresh_settimeout() {
+    //   setInterval(function () {
+    //     this.fetch_satcode()
+    //   }, 1000)
+    // },
   },
 }
 </script>
