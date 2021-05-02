@@ -111,6 +111,9 @@ export default {
         label: 'วันที่ตรวจ',
         field: 'dateadd',
         sortable: false,
+        type: 'date',
+        dateInputFormat: 'yyyy-MM-dd', // expects 2018-03-16
+        dateOutputFormat: 'dd-MM-yyyy', // outputs Mar 16th 2018
       },
       {
         label: 'ช่วงเวลา',

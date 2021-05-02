@@ -224,7 +224,6 @@
                       </p>
                       <v-date-picker
                         v-model="dateadd"
-                        readonly
                         locale="th-TH"
                         color="#ea97ad"
                       ></v-date-picker>
@@ -793,7 +792,7 @@ export default {
             })
             this.add_edit_clear()
             this.$refs.resatcode.fetch_satcode()
-            this.$refs.resatcodeall.fetch_satcode()
+            // this.$refs.resatcodeall.fetch_satcode()
           } else {
             this.$swal({
               title: 'สถานะการแก้ไข',

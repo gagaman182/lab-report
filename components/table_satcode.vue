@@ -102,6 +102,9 @@ export default {
         label: 'วันที่ตรวจ',
         field: 'dateadd',
         sortable: false,
+        type: 'date',
+        dateInputFormat: 'yyyy-MM-dd', // expects 2018-03-16
+        dateOutputFormat: 'dd-MM-yyyy', // outputs Mar 16th 2018
       },
       {
         label: 'ช่วงเวลา',
@@ -133,35 +136,44 @@ export default {
         behavior: 'smooth',
       })
     },
-    //call parent  method
+    //call parent  method from prop
     call_parent() {
       this.move_up_add()
     },
     // mark y
     async mark_y() {
-      await axios
-        .put(`${this.$axios.defaults.baseURL}update_satcode_y.php`)
-        .then((response) => {
-          this.message = response.data
-          if (this.message[0].message === 'อัพโหลดข้อมูลสำเร็จ') {
-            this.$swal({
-              title: 'สถานะการอัพโหลด',
-              text: this.message[0].message,
-              icon: 'success',
-              confirmButtonText: 'ตกลง',
-            })
-
-            this.fetch_satcode()
-            this.reset_child_all()
-          } else {
-            this.$swal({
-              title: 'สถานะการอัพโหลด',
-              text: this.message[0].message,
-              icon: 'error',
-              confirmButtonText: 'ตกลง',
-            })
-          }
+      if (this.satcode_day.length == 0) {
+        this.$swal({
+          title: 'แจ้งเตือน',
+          text: 'ยังไม่มีข้อมูลการออกโค้ด',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
         })
+      } else {
+        await axios
+          .put(`${this.$axios.defaults.baseURL}update_satcode_y.php`)
+          .then((response) => {
+            this.message = response.data
+            if (this.message[0].message === 'อัพโหลดข้อมูลสำเร็จ') {
+              this.$swal({
+                title: 'สถานะการอัพโหลด',
+                text: this.message[0].message,
+                icon: 'success',
+                confirmButtonText: 'ตกลง',
+              })
+
+              this.fetch_satcode()
+              this.reset_child_all()
+            } else {
+              this.$swal({
+                title: 'สถานะการอัพโหลด',
+                text: this.message[0].message,
+                icon: 'error',
+                confirmButtonText: 'ตกลง',
+              })
+            }
+          })
+      }
     },
   },
 }

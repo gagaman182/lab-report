@@ -9,6 +9,9 @@
               ข้อมูลการออก SAT CODE ทั้งหมด
             </h2>
             <v-spacer></v-spacer>
+            <h2>
+              <v-icon size="30">mdi-calendar-range </v-icon> &nbsp;{{ datenow }}
+            </h2>
             <v-btn color="#7b6079" dark x-large class="mx-4" @click="refresh">
               <v-icon size="30">mdi-refresh-circle </v-icon>
             </v-btn>
@@ -19,6 +22,11 @@
             </v-btn>
           </v-toolbar>
         </v-col>
+        <v-col cols="12"
+          ><v-alert color="#2A3B4D" dark icon="mdi-alarm " dense>
+            ระบบจำประมวลผลข้อมูลทุก 15 วินาที
+          </v-alert></v-col
+        >
         <v-col>
           <vue-good-table
             :line-numbers="true"
@@ -103,8 +111,8 @@ export default {
         label: 'วันที่ตรวจ',
         field: 'dateadd',
         sortable: false,
-        dateInputFormat: 'yyyy-MM-dd',
-        dateOutputFormat: 'dd-MM-yyyy',
+        // dateInputFormat: 'yyyy-MM-dd',
+        // dateOutputFormat: 'dd-MM-yyyy',
       },
       {
         label: 'ช่วงเวลา',
@@ -120,12 +128,19 @@ export default {
     fullname: '',
     message: '',
     excel_thai: '',
+    timer: '',
   }),
   mounted() {
     this.fetch_satcode()
-    // this.refresh_settimeout()
+
     this.fecth_satcode_excel()
   },
+  // refresh ทุก 5วิ ไปเรียก refresh_settimeout สั่ง refresh 2 ชั้น
+  created() {
+    this.refresh_settimeout()
+    this.timer = setInterval(this.refresh_settimeout, 15000)
+  },
+
   methods: {
     async fetch_satcode() {
       this.dialog = true
@@ -151,11 +166,10 @@ export default {
     refresh() {
       this.fetch_satcode()
     },
-    // refresh_settimeout() {
-    //   setInterval(function () {
-    //     this.fetch_satcode()
-    //   }, 1000)
-    // },
+    // refresh tabl ทุก 5 วิ
+    refresh_settimeout() {
+      setInterval(this.fetch_satcode(), 15000)
+    },
   },
 }
 </script>
