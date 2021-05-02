@@ -31,7 +31,7 @@
    
     >
       <v-icon size="100">mdi-chemical-weapon  </v-icon>
-      <span class="display-3"> LAB COVID-19</span>
+      <span class="display-1"> ระบบตรวจสอบผล LAB และ ออกเลข SATCODE เพื่อ SWAB </span>
       <v-spacer></v-spacer>
         <h1> <v-icon size="30" >mdi-calendar-range </v-icon>{{ datenow }}</h1>
         <h1><v-icon size="30">mdi-clock-time-five-outline </v-icon>{{ timenow }}</h1>

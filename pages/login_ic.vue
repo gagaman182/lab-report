@@ -62,7 +62,7 @@
 <script>
 import axios from 'axios'
 export default {
-  layout: 'login',
+  layout: 'ic',
 
   data() {
     return {
