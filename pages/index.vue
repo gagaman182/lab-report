@@ -218,9 +218,10 @@ export default {
     refresh() {
       this.fetch_lab()
       this.chart_line()
+      this.chart_risk()
     },
 
-    //chart line
+    //chart line + bar
     async chart_line() {
       await axios
         .get(`${this.$axios.defaults.baseURL}chart_line_month.php`)

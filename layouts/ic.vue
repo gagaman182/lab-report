@@ -31,7 +31,7 @@
    
     >
       <v-icon size="100">mdi-barcode-scan  </v-icon>
-      <span class="display-3"> ข้อมูลรายชื่อผู้ออกโค้ดเพื่อสวอป </span>
+      <span class="display-3"> ทะเบียนรายงาน SATCODE </span>
       
       
     
@@ -133,12 +133,10 @@ export default {
                     //check login
                     this.session = JSON.parse(localStorage.getItem('token'))
                     //ถ้าไม่มี session จาก ฐานข้อมูลคือไม่ได้ login ให้กลับไปหน้า /login
-                    if (this.session[0].type !== 'ic') {
-                      this.$router.push('/login')
-                    } else {
+                    if (this.session[0].type == 'ic' || this.session[0].type == 'srrt' ) {
                      
-                      this.user = this.session[0].fullname
-                      this.token = this.session[0].token
+                        this.user = this.session[0].fullname
+                        this.token = this.session[0].token
 
                       if (this.token.length <= 0) {
                         this.$router.push('/login')
@@ -154,6 +152,9 @@ export default {
                           this.$router.push('/login')
                         }
                       }
+                    } else {
+                      this.$router.push('/login')
+                    
                     }
                   },
                 logout() {

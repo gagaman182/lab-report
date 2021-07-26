@@ -64,6 +64,10 @@ export default {
       tooltip: {
         shared: true,
         intersect: false,
+        style: {
+          fontSize: '18px',
+          fontFamily: 'Kanit, sans-serif',
+        },
       },
       xaxis: {
         categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],

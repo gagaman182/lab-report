@@ -5,23 +5,7 @@
 
  
 
- $sql = "SELECT
- hn ,
-prename ,
-fullname ,
-tel ,
-risk ,
-satcode,
-DATE_FORMAT(dateadd,'%d-%m-%Y') as dateadd,
-other 
- FROM
-  satcode
- where 
- marky = 'y'
- and dateadd >= DATE_FORMAT(now(),'%Y-%m-%d')
-
-
- ";
+ $sql = "SELECT * from risk";
 
 
 $return_arr = array();

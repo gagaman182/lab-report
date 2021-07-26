@@ -90,14 +90,28 @@
                         class="headline"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="8"
-                      ><v-text-field
+                    <v-col cols="12" md="7">
+                      <!-- <v-text-field
                         label="ประวัติความเสี่ยง"
                         v-model="risk"
                         outlined
                         x-large
                         class="headline"
-                      ></v-text-field>
+                      ></v-text-field> -->
+                      <v-select
+                        :items="risk_name"
+                        v-model="risk"
+                        :menu-props="{ top: true, offsetY: true }"
+                        label="ประวัติความเสี่ยง"
+                        outlined
+                        x-large
+                        class="subheadline"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="1"
+                      ><v-btn text color="primary">
+                        <NuxtLink to="/risk">เพิ่มความเสี่ยง</NuxtLink>
+                      </v-btn>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -226,6 +240,7 @@
                         v-model="dateadd"
                         locale="th-TH"
                         color="#ea97ad"
+                        @dblclick:date="dblClick"
                       ></v-date-picker>
                     </v-col>
                   </v-row>
@@ -258,6 +273,33 @@
           </v-card-text>
         </v-card>
       </v-tab-item>
+      <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <!-- prop function คือ จาก แม่ไปลูก
+            จากลูกไปแม่ใช่ส่ง ref -->
+            <chart_column
+              v-if="loadcolumnday"
+              :columnday_day="columnday_day"
+              :columnday_risk1="columnday_risk1"
+              :columnday_risk2="columnday_risk2"
+              :columnday_risk3="columnday_risk3"
+              :columnday_risk4="columnday_risk4"
+              :columnday_risk5="columnday_risk5"
+            ></chart_column>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item>
+        <v-card flat>
+          <v-card-text><ic_view_srrt></ic_view_srrt> </v-card-text>
+        </v-card>
+      </v-tab-item>
+       <v-tab-item>
+        <v-card flat>
+          <v-card-text><detect_calendar></detect_calendar> </v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
 </template>
@@ -267,10 +309,16 @@ import axios from 'axios'
 
 import table_satcode from '~/components/table_satcode.vue'
 import table_all from '~/components/table_all.vue'
+import chart_column from '~/components/chart_column.vue'
+import ic_view_srrt from '~/components/ic_view_srrt.vue'
+ import detect_calendar from '~/components/detect_calendar.vue'
 export default {
   components: {
     table_satcode,
     table_all,
+    chart_column,
+    ic_view_srrt,
+     detect_calendar
   },
   data() {
     return {
@@ -285,6 +333,8 @@ export default {
       fullname: '',
       tel: '',
       risk: '',
+      risk_items: '',
+      risk_name: '',
       hoscode: '10682',
       type_code: 'A',
       day_code: '',
@@ -308,7 +358,18 @@ export default {
       item_tab: [
         { tab: 'เพิ่มSATCODE', icon: 'mdi-barcode-scan' },
         { tab: 'SATCODEทั้งหมด', icon: 'mdi-card-account-details-outline' },
+        { tab: 'กราฟตามประเภทความเสี่ยง', icon: 'mdi-chart-bar-stacked ' },
+        { tab: 'ic', icon: 'mdi-tablet-dashboard  ' },
+        { tab: 'ปฏิทิน', icon: 'mdi-calendar   ' },
       ],
+      columnday: '',
+      columnday_day: '',
+      columnday_risk1: '',
+      columnday_risk2: '',
+      columnday_risk3: '',
+      columnday_risk4: '',
+      columnday_risk5: '',
+      loadcolumnday: false,
     }
   },
   mounted() {
@@ -316,6 +377,9 @@ export default {
       new Date().toISOString().substr(8, 2) +
       new Date().toISOString().substr(5, 2) +
       new Date().toISOString().substr(2, 2)
+
+    this.fetch_risk()
+    this.chart_risk()
   },
   methods: {
     //หาจำนวนผู้ป่วยว่ามีกี่คนแล้ว
@@ -342,6 +406,32 @@ export default {
           }
         })
     },
+    //แสดงข้อมูลrisk
+    async fetch_risk() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}risk.php`)
+        .then((response) => {
+          this.risk_items = response.data
+          this.risk_name = this.risk_items.map((item) => item.riskname)
+        })
+    },
+
+    //chart column
+    async chart_risk() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}risk_chart.php`)
+        .then((response) => {
+          this.loadcolumnday = true
+          this.columnday = response.data
+
+          this.columnday_day = this.columnday.map((item) => item.dateadd)
+          this.columnday_risk1 = this.columnday.map((item) => item.risk1)
+          this.columnday_risk2 = this.columnday.map((item) => item.risk2)
+          this.columnday_risk3 = this.columnday.map((item) => item.risk3)
+          this.columnday_risk4 = this.columnday.map((item) => item.risk4)
+          this.columnday_risk5 = this.columnday.map((item) => item.risk5)
+        })
+    },
 
     async hn_detail() {
       //เรียกดูผู้ป่วยวันนี้ก่อน
@@ -349,7 +439,14 @@ export default {
       if (this.hn) {
         //clear hn ก่อน search
         this.beforsearch()
-        //check hn จากฐาน satcode
+        //check hn จากาน satcode
+        // await axios
+        //   .post(`${this.$axios.defaults.baseURL}hn_detail.php`, {
+        //     hn: this.hn,
+        //   })
+        //   .then((response) => {
+        //     this.hn_check = response.data
+
         await axios
           .post(`${this.$axios.defaults.baseURL}hn_detail.php`, {
             hn: this.hn,
@@ -872,6 +969,14 @@ export default {
     },
     reset_child_all() {
       this.$refs.resatcodeall.fetch_satcode()
+    },
+    //เลือกวันที่
+    dblClick(date) {
+      this.day_code = `${
+        date.substr(8, 2) + date.substr(5, 2) + date.substring(2, 4)
+      }`
+      this.change_code()
+      // date.substr(8, 2) + date.substr(5, 2) + date.substring(2, 2)
     },
   },
 }

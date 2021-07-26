@@ -6,20 +6,18 @@
  
 
  $sql = "SELECT
- hn ,
-prename ,
-fullname ,
-tel ,
-risk ,
-satcode,
-DATE_FORMAT(dateadd,'%d-%m-%Y') as dateadd,
-other 
+ hn as HN,
+prename as 'คำนำหน้าชื่อ',
+fullname as 'ชื่อ-สกุล',
+tel as 'เบอร์โทร',
+risk as 'ความเสี่ยง',
+satcode as 'SAT CODE',
+DATE_FORMAT(dateadd,'%d-%m-%Y') as 'วันที่ตรวจ',
+other as 'ช่วงเวลา'
  FROM
   satcode
  where 
  marky = 'y'
- and dateadd >= DATE_FORMAT(now(),'%Y-%m-%d')
-
 
  ";
 

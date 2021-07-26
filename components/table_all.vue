@@ -9,6 +9,12 @@
               ข้อมูลการออก SAT CODE ทั้งหมด
             </h2>
             <v-spacer></v-spacer>
+
+            <v-btn color="#51c4d3" dark x-large
+              ><export-excel :data="excel_thai_all">
+                <v-icon size="30">mdi-file-excel </v-icon>
+              </export-excel>
+            </v-btn>
           </v-toolbar>
         </v-col>
         <v-col>
@@ -110,7 +116,7 @@ export default {
       {
         label: 'วันที่ตรวจ',
         field: 'dateadd',
-        sortable: false,
+        // sortable: false,
         type: 'date',
         dateInputFormat: 'yyyy-MM-dd', // expects 2018-03-16
         dateOutputFormat: 'dd-MM-yyyy', // outputs Mar 16th 2018
@@ -128,9 +134,11 @@ export default {
     prename: '',
     fullname: '',
     message: '',
+    excel_thai_all: '',
   }),
   mounted() {
     this.fetch_satcode()
+    this.fetch_satcode_excel()
   },
   methods: {
     async fetch_satcode() {
@@ -191,6 +199,13 @@ export default {
               confirmButtonText: 'ตกลง',
             })
           }
+        })
+    },
+    async fetch_satcode_excel() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}satcode_excel_all.php`)
+        .then((response) => {
+          this.excel_thai_all = response.data
         })
     },
   },

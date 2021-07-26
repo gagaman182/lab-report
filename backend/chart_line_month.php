@@ -10,8 +10,8 @@ include 'connect.php';
   $sqlipd = "SELECT * from (
     SELECT 
     TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YY') AS DATETIME,
-    count(CASE WHEN LABRESULT.CHARACTER_RESULT = 'Not Detected' THEN OFH_LIKE.HN END) AS no_covid,
-    count(CASE WHEN LABRESULT.CHARACTER_RESULT <> 'Not Detected' THEN OFH_LIKE.HN END) AS yes_covid,
+    count(CASE WHEN LABRESULT.CHARACTER_RESULT not LIKE '%ORF%' THEN OFH_LIKE.HN END) AS no_covid,
+    count(CASE WHEN LABRESULT.CHARACTER_RESULT LIKE '%ORF%'  THEN OFH_LIKE.HN END) AS yes_covid,
     count(OFH_LIKE.HN) as all_covid
     
     
@@ -34,10 +34,10 @@ include 'connect.php';
     
     
     GROUP BY TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YY')
-    ORDER BY TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YY'))LAB
+    ORDER BY TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YY') desc)LAB
     where ROWNUM < 15
    
-
+    ORDER BY TO_DATE(LAB.DATETIME,'DD-MM-YY')
 
 
 

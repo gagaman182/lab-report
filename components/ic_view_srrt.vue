@@ -24,7 +24,7 @@
         </v-col>
         <v-col cols="12"
           ><v-alert color="#2A3B4D" dark icon="mdi-alarm " dense>
-            ระบบจำประมวลผลข้อมูลทุก 15 วินาที
+            ระบบจำประมวลผลข้อมูลทุก 60 วินาที
           </v-alert></v-col
         >
         <v-col>
@@ -138,7 +138,7 @@ export default {
   // refresh ทุก 5วิ ไปเรียก refresh_settimeout สั่ง refresh 2 ชั้น
   created() {
     this.refresh_settimeout()
-    this.timer = setInterval(this.refresh_settimeout, 15000)
+    this.timer = setInterval(this.refresh_settimeout, 60000)
   },
 
   methods: {
@@ -166,9 +166,9 @@ export default {
     refresh() {
       this.fetch_satcode()
     },
-    // refresh tabl ทุก 5 วิ
+    // refresh tabl ทุก 15 วิ
     refresh_settimeout() {
-      setInterval(this.fetch_satcode(), 15000)
+      setInterval(this.fetch_satcode(), 60000)
     },
   },
 }

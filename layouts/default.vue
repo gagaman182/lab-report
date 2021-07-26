@@ -41,22 +41,24 @@
     </v-system-bar>
    
    
-  <v-btn-toggle
+ <v-btn-toggle
         v-model="text"
         tile
         color="deep-purple accent-3"
         group
       >
-        <v-btn value="left" class="display-1"  >
+        <v-btn value="left" class="headline"  >
           <NuxtLink to="/">รายงานผล LAB </NuxtLink>
         </v-btn>
 
-        <v-btn value="center" class="display-1">
+        <v-btn value="center" class="headline">
        <NuxtLink to="/add-code"> ออกผล SATCODE</NuxtLink>
         </v-btn>
 
         
-      </v-btn-toggle>
+      </v-btn-toggle> 
+        
+  
      
        
     <v-row>
@@ -163,6 +165,7 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'LAB',
+      user:''
     }
   },
   methods: {
@@ -175,10 +178,9 @@ export default {
                     //check login
                     this.session = JSON.parse(localStorage.getItem('token'))
                     //ถ้าไม่มี session จาก ฐานข้อมูลคือไม่ได้ login ให้กลับไปหน้า /login
-                    if (this.session[0].type !== 'srrt') {
-                      this.$router.push('/login')
-                    } else {
-                      this.user = this.session[0].fullname
+                    if (this.session[0].type == 'srrt' ) {
+                     
+                       this.user = this.session[0].fullname
                       this.token = this.session[0].token
 
                       if (this.token.length <= 0) {
@@ -195,6 +197,8 @@ export default {
                           this.$router.push('/login')
                         }
                       }
+                    } else {
+                      this.$router.push('/login')
                     }
                   },
                 logout() {

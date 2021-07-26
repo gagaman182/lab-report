@@ -16,6 +16,7 @@
                     name="login"
                     type="text"
                     v-model="username"
+                    @keyup.enter="login()"
                     solo
                   ></v-text-field>
                   <p class="body-1 font-weight-bold">Password</p>
@@ -24,6 +25,7 @@
                     name="password"
                     type="password"
                     v-model="password"
+                    @keyup.enter="login()"
                     solo
                   ></v-text-field>
                 </v-form>
@@ -48,7 +50,7 @@
                   @click="remove"
                   x-large
                 >
-                  <!-- <NuxtLink to="/">กลับหน้าหลัก</NuxtLink> -->
+                  <NuxtLink to="/">กลับหน้าหลัก</NuxtLink>
                 </v-btn>
               </v-layout>
             </v-flex>

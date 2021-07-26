@@ -18,7 +18,7 @@ other as 'ช่วงเวลา'
   satcode
  where 
  marky = 'y'
- and dateadd = DATE_FORMAT(now(),'%Y-%m-%d')
+ and dateadd >= DATE_FORMAT(now(),'%Y-%m-%d')
  ";
 
 
