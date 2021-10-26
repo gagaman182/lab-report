@@ -12,8 +12,8 @@ include 'connect.php';
         SELECT * from (
             SELECT 
             TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YY') AS DATETIME,
-            count(CASE WHEN LABRESULT.CHARACTER_RESULT not LIKE '%ORF%' THEN OFH_LIKE.HN END) AS no_covid,
-            count(CASE WHEN LABRESULT.CHARACTER_RESULT LIKE '%ORF%'  THEN OFH_LIKE.HN END) AS yes_covid,
+            count(CASE WHEN LABRESULT.CHARACTER_RESULT  LIKE '%Negative%' THEN OFH_LIKE.HN END) AS no_covid,
+            count(CASE WHEN LABRESULT.CHARACTER_RESULT LIKE '%Positive%'  THEN OFH_LIKE.HN END) AS yes_covid,
             count(OFH_LIKE.HN) as all_covid
             
             
@@ -28,7 +28,7 @@ include 'connect.php';
             
             WHERE
                 LABRESULT.LAB1_LABCODE IN (
-            'VI020-F'
+            'VI23'
                 
               )
             
@@ -42,7 +42,7 @@ include 'connect.php';
             ORDER BY TO_DATE(LAB.DATETIME,'DD-MM-YY') desc)z
         where ROWNUM <= 15)ee
     ORDER BY TO_DATE(ee.DATETIME,'DD-MM-YY') asc
-        
+  
   ";
 
 

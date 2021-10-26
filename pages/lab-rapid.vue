@@ -2,15 +2,15 @@
   <v-row>
     <v-col cols="12">
       <v-card class="mx-auto">
-        <v-toolbar color="#a2d0c1">
+        <v-toolbar color="#B980F0">
           <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
           <h2>
-            <v-icon size="30"> mdi-database-clock </v-icon>รายงานผล LAB COVID-19
+            <v-icon size="30"> mdi-database-clock </v-icon>รายงานผล LAB RAPID
             จาก PMK
           </h2>
           <v-spacer></v-spacer>
-          <v-btn color="#FF8882" dark x-large
+          <v-btn color="#51c4d3" dark x-large
             ><export-excel :data="rows">
               <v-icon size="30">mdi-file-excel </v-icon>
             </export-excel>
@@ -47,7 +47,7 @@
               <template slot="table-row" slot-scope="props">
                 <span v-if="props.column.field == 'result'">
                   <span
-                    v-if="props.row.result == 'Not Detected'"
+                    v-if="props.row.result == 'Negative'"
                     style="font-weight: bold; color: green"
                     >{{ props.row.result }}</span
                   >
@@ -67,12 +67,12 @@
     </v-col>
     <v-col cols="12"
       ><v-card>
-        <v-toolbar color="#a2d0c1">
+        <v-toolbar color="#B980F0">
           <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
           <h2>
             <v-icon size="30"> mdi-chart-bell-curve-cumulative </v-icon
-            >กราฟแสดงจำนวนผู้ได้รับการตรวจ COVID-19 ทั้งหมด ต่อวัน(2 สัปดาห์
+            >กราฟแสดงจำนวนผู้ได้รับการตรวจ LAB RAPID ทั้งหมด ต่อวัน(2 สัปดาห์
             ล่าสุด)
           </h2>
           <v-spacer></v-spacer>
@@ -87,23 +87,23 @@
           >
             <v-icon medium>mdi-refresh </v-icon>
           </v-btn> --> </v-toolbar
-        ><chart_line
+        ><chart_line_rapid
           v-if="loadlineday"
           :lineday_datetime="lineday_datetime"
           :lineday_no_covid="lineday_no_covid"
           :lineday_yes_covid="lineday_yes_covid"
           :lineday_all_covid="lineday_all_covid"
-        ></chart_line
+        ></chart_line_rapid
       ></v-card>
     </v-col>
     <v-col cols="12"
       ><v-card>
-        <v-toolbar color="#a2d0c1">
+        <v-toolbar color="#B980F0">
           <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
           <h2>
             <v-icon size="30"> mdi-chart-box </v-icon
-            >กราฟแสดงจำนวนผู้ได้รับการตรวจ COVID-19 แสดงตามผลการตรวจ ต่อวัน (2
+            >กราฟแสดงจำนวนผู้ได้รับการตรวจ LAB RAPID แสดงตามผลการตรวจ ต่อวัน (2
             สัปดาห์ ล่าสุด)
           </h2>
           <v-spacer></v-spacer>
@@ -118,13 +118,13 @@
           >
             <v-icon medium>mdi-refresh </v-icon>
           </v-btn> --> </v-toolbar
-        ><chart_bar
+        ><chart_bar_rapid
           v-if="loadlineday"
           :lineday_datetime="lineday_datetime"
           :lineday_no_covid="lineday_no_covid"
           :lineday_yes_covid="lineday_yes_covid"
           :lineday_all_covid="lineday_all_covid"
-        ></chart_bar
+        ></chart_bar_rapid
       ></v-card>
     </v-col>
     <v-dialog v-model="dialog" hide-overlay persistent width="300">
@@ -145,10 +145,10 @@
 <script>
 import axios from 'axios'
 
-import chart_line from '~/components/chart_line.vue'
-import chart_bar from '~/components/chart_bar.vue'
+import chart_line_rapid from '~/components/chart_line_rapid.vue'
+import chart_bar_rapid from '~/components/chart_bar_rapid.vue'
 export default {
-  components: { chart_line, chart_bar },
+  components: { chart_line_rapid, chart_bar_rapid },
   data() {
     return {
       dialog: false,
@@ -209,21 +209,6 @@ export default {
           label: 'ผล',
           field: 'result',
         },
-        {
-          label: 'WARD',
-          field: 'WARD',
-          sortable: false,
-        },
-        {
-          label: 'ห้องตรวจ',
-          field: 'HALFPLACE',
-          sortable: false,
-        },
-        {
-          label: 'วัน admit',
-          field: 'DATEADMIT',
-          sortable: false,
-        },
       ],
       rows: [],
       lineday: '',
@@ -244,7 +229,7 @@ export default {
     async fetch_lab() {
       this.dialog = true
       await axios
-        .get(`${this.$axios.defaults.baseURL}lab_pui.php`)
+        .get(`${this.$axios.defaults.baseURL}lab_rapid.php`)
         .then((response) => {
           this.rows = response.data
           this.dialog = false
@@ -259,7 +244,7 @@ export default {
     //chart line + bar
     async chart_line() {
       await axios
-        .get(`${this.$axios.defaults.baseURL}chart_line_month.php`)
+        .get(`${this.$axios.defaults.baseURL}chart_line_month_rapid.php`)
         .then((response) => {
           this.loadlineday = true
           this.lineday = response.data

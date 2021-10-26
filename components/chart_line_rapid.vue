@@ -1,7 +1,8 @@
 <template>
   <div class="app">
     <apexchart
-      type="bar"
+      type="line"
+      height="500"
       width="98%"
       :options="chartOptions"
       :series="series"
@@ -26,59 +27,67 @@ export default {
   data: () => ({
     series: [
       {
-        data: [44, 55, 41, 64, 22, 43, 21],
+        name: 'High - 2013',
+        data: [28, 29, 33, 36, 32, 32, 33],
       },
       {
-        data: [53, 32, 33, 52, 13, 44, 32],
+        name: 'High - 2013',
+        data: [28, 29, 33, 36, 32, 32, 33],
       },
-      // {
-      //   data: [53, 32, 33, 52, 13, 44, 32],
-      // },
     ],
     chartOptions: {
       chart: {
-        type: 'bar',
-        height: 430,
-      },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          dataLabels: {
-            position: 'top',
-          },
+        height: 350,
+        type: 'line',
+        dropShadow: {
+          enabled: true,
+          color: '#000',
+          top: 18,
+          left: 7,
+          blur: 10,
+          opacity: 0.2,
+        },
+        toolbar: {
+          show: false,
         },
       },
+      colors: ['#77B6EA', '#545454'],
       dataLabels: {
         enabled: true,
-        offsetX: -6,
-        style: {
-          fontSize: '12px',
-          colors: ['#fff'],
-        },
       },
       stroke: {
-        show: true,
-        width: 1,
-        colors: ['#fff'],
+        curve: 'smooth',
       },
-      tooltip: {
-        shared: true,
-        intersect: false,
+      title: {
+        text: 'จำนวน/วัน ',
+        align: 'left',
         style: {
           fontSize: '18px',
           fontFamily: 'Kanit, sans-serif',
         },
       },
+      grid: {
+        borderColor: '#e7e7e7',
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5,
+        },
+      },
+      markers: {
+        size: 1,
+      },
       xaxis: {
-        categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],
-        labels: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+
+        title: {
+          text: 'วันที่ตรวจ',
           style: {
-            fontSize: '16px',
+            fontSize: '18px',
             fontFamily: 'Kanit, sans-serif',
           },
         },
-        title: {
-          text: 'จำนวน',
+        labels: {
+          rotate: -45,
           style: {
             fontSize: '18px',
             fontFamily: 'Kanit, sans-serif',
@@ -86,19 +95,32 @@ export default {
         },
       },
       yaxis: {
-        labels: {
+        title: {
+          text: 'จำนวน',
           style: {
             fontSize: '18px',
             fontFamily: 'Kanit, sans-serif',
           },
         },
+        labels: {
+          style: {
+            fontSize: '16px',
+            fontFamily: 'Kanit, sans-serif',
+          },
+        },
+
+        // min: 5,
+        // max: 40,
       },
+
+      colors: ['#F5E79D', '#FE9898'],
       legend: {
-        position: 'bottom',
-        fontSize: '18px',
-        fontFamily: 'Kanit, sans-serif',
+        position: 'top',
+        horizontalAlign: 'right',
+        floating: true,
+        offsetY: -25,
+        offsetX: -5,
       },
-      colors: ['#f56a79', '#01c5c4'],
       tooltip: {
         style: {
           fontSize: '18px',
@@ -109,7 +131,7 @@ export default {
         enabled: true,
 
         style: {
-          fontSize: '16px',
+          fontSize: '18px',
           fontFamily: 'Kanit, sans-serif',
           fontWeight: 'bold',
         },
@@ -117,11 +139,11 @@ export default {
     },
   }),
   beforeMount() {
-    this.series[0].name = 'ผล Detected'
-    this.series[0].data = this.lineday_yes_covid
-    this.series[1].name = 'ผล Not Detected'
-    this.series[1].data = this.lineday_no_covid
-    // this.series[2].data = this.lineday_all_covid
+    this.series[0].name = 'Negative'
+    this.series[0].data = this.lineday_all_covid
+    this.series[1].name = 'Positive'
+    this.series[1].data = this.lineday_yes_covid
+
     this.chartOptions.xaxis.categories = this.lineday_datetime
 
     // //เอา array แรกเลยใช้ [0]

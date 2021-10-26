@@ -117,9 +117,9 @@ export default {
     },
   }),
   beforeMount() {
-    this.series[0].name = 'ผล Detected'
+    this.series[0].name = 'Negative'
     this.series[0].data = this.lineday_yes_covid
-    this.series[1].name = 'ผล Not Detected'
+    this.series[1].name = 'Positive'
     this.series[1].data = this.lineday_no_covid
     // this.series[2].data = this.lineday_all_covid
     this.chartOptions.xaxis.categories = this.lineday_datetime

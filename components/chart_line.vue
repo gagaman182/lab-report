@@ -30,6 +30,10 @@ export default {
         name: 'High - 2013',
         data: [28, 29, 33, 36, 32, 32, 33],
       },
+      {
+        name: 'High - 2013',
+        data: [28, 29, 33, 36, 32, 32, 33],
+      },
     ],
     chartOptions: {
       chart: {
@@ -109,7 +113,7 @@ export default {
         // max: 40,
       },
 
-      colors: ['#f6ae2d'],
+      colors: ['#FFD371', '#FF4848'],
       legend: {
         position: 'top',
         horizontalAlign: 'right',
@@ -137,8 +141,9 @@ export default {
   beforeMount() {
     this.series[0].name = 'ตรวจทั้งหมด'
     this.series[0].data = this.lineday_all_covid
+    this.series[1].name = 'พบเชื้อ'
+    this.series[1].data = this.lineday_yes_covid
     this.chartOptions.xaxis.categories = this.lineday_datetime
-
     // //เอา array แรกเลยใช้ [0]
     // this.chartOptions.title.text = `ปีงบ ${this.linemonth_years[0]}`
   },

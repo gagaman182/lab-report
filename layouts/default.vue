@@ -51,6 +51,10 @@
           <NuxtLink to="/">รายงานผล LAB </NuxtLink>
         </v-btn>
 
+        <v-btn value="left" class="headline"  >
+          <NuxtLink to="/lab-rapid">รายงานผล LAB RAPID </NuxtLink>
+        </v-btn>
+
         <v-btn value="center" class="headline">
        <NuxtLink to="/add-code"> ออกผล SATCODE</NuxtLink>
         </v-btn>
