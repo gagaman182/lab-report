@@ -66,9 +66,8 @@ export default {
     axios: {
         //home
         //baseURL: 'http://localhost/labreport/backend/',
-        // // 4.3
+        // 4.3
         baseURL: 'http://192.168.4.3/webapp/lab-report/backend/',
-
         // 172.16.99.200/
         //baseURL: 'http://172.16.99.200/fm/lab-report/backend/',
         //server 5.1

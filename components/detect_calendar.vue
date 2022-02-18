@@ -47,7 +47,7 @@ export default {
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: 'dayGridMonth',
       // dateClick: this.handleDateClick,
-      eventColor: '#810000',
+      eventColor: '#5089C6',
       //แก้ไทย
       locales: allLocales,
       locale: 'th',

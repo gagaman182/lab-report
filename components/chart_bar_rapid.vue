@@ -98,7 +98,7 @@ export default {
         fontSize: '18px',
         fontFamily: 'Kanit, sans-serif',
       },
-      colors: ['#f56a79', '#01c5c4'],
+      colors: ['#01c5c4', '#f56a79'],
       tooltip: {
         style: {
           fontSize: '18px',
@@ -117,10 +117,10 @@ export default {
     },
   }),
   beforeMount() {
-    this.series[0].name = 'Negative'
-    this.series[0].data = this.lineday_yes_covid
     this.series[1].name = 'Positive'
-    this.series[1].data = this.lineday_no_covid
+    this.series[1].data = this.lineday_yes_covid
+    this.series[0].name = 'Negative'
+    this.series[0].data = this.lineday_no_covid
     // this.series[2].data = this.lineday_all_covid
     this.chartOptions.xaxis.categories = this.lineday_datetime
 

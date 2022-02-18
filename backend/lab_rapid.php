@@ -3,14 +3,15 @@
    
 
 include 'connect.php';
-// $opdno = $_GET["opdno"];
 
 
+$showdata = $_GET["showdata"];
 
+if($showdata == 'day'){
+    $data=array();
 
-$data=array();
-
-$strSQL  = "SELECT DISTINCT
+$strSQL  = "
+SELECT DISTINCT
 OFH_LIKE.HN,
 case when PATIENTS.ID_CARD is null then '-'  
 when PATIENTS.ID_CARD is not null then PATIENTS.ID_CARD  end as  ID_CARD,
@@ -26,7 +27,11 @@ OFH_LIKE.OPD_FINANCE_NO,
 TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YYYY') as DATETIME,
 LABCODE_DETAIL.LABCODE_DETAIL_CODE,
 LABCODE_DETAIL.NAME,
-LABRESULT.CHARACTER_RESULT
+LABRESULT.CHARACTER_RESULT,
+to_char('บ้านเลขที่  '    ||PATIENTS.HOME) as HOME,
+	TAMBON.NAME as TAMBON,
+	DISULTS.DIST_NAME as DISULT ,
+	PROVINCES.PROV_NAME as 	PROVINCE
 
 
 FROM
@@ -37,31 +42,24 @@ INNER JOIN LABCODES ON LAB_FINANCE_DETAILS.LAB1_LABCODE = LABCODES.LABCODE
 INNER JOIN PLACES ON OFH_LIKE.PLA_PLACECODE = PLACES.PLACECODE
 left join LABRESULT on  LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = LABRESULT.OFH_OPD_FINANCE_NO and LAB_FINANCE_DETAILS.LAB1_LABCODE = LABRESULT.lab1_labcode 
 INNER JOIN LABCODE_DETAIL ON LABRESULT.LABCODE_DETAIL_CODE = LABCODE_DETAIL.LABCODE_DETAIL_CODE
+LEFT JOIN TAMBON ON TAMBON.CODE = PATIENTS.TAMBON
+LEFT JOIN PROVINCES ON PATIENTS.PRO1_PROV_CODE = PROVINCES.PROV_CODE
+LEFT JOIN DISULTS ON PATIENTS.DIS_DIST_CODE = DISULTS.DIST_CODE
 
 WHERE
 		LABRESULT.LAB1_LABCODE IN (
-'VI23'
+'VI23',
+'VI023',
+'VI24'
+
 		
 	)
-   
+   and TO_CHAR(OFH_LIKE.DATETIME,'yyyy-mm-dd')  >= TO_CHAR(SYSDATE, 'yyyy-mm-dd')
 
     order by OFH_LIKE.OPD_FINANCE_NO desc
 
-
-
-
-
-
-
-
-
-
-
-
-
-	
 ";
-//and DISEASE_WAREHOUSE.HN = '".$hn."'
+
 
 $objParse = oci_parse ($objConnect, $strSQL);
 oci_execute($objParse,OCI_DEFAULT);
@@ -79,6 +77,10 @@ while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
     $a['LABCODE_DETAIL_CODE']=$rs_pmk[8];
     $a['NAME']=$rs_pmk[9];
     $a['result']=$rs_pmk[10];
+    $a['HOME']=$rs_pmk[11];
+	$a['TAMBON']=$rs_pmk[12];
+	$a['DISULT']=$rs_pmk[13];
+	$a['PROVINCE']=$rs_pmk[14];
 
    
 
@@ -91,8 +93,270 @@ while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
 	
 	array_push($data,$a);
 }	
+} elseif($showdata ==  'weeks'){
+    $data=array();
+
+$strSQL  = "
+SELECT DISTINCT
+OFH_LIKE.HN,
+case when PATIENTS.ID_CARD is null then '-'  
+when PATIENTS.ID_CARD is not null then PATIENTS.ID_CARD  end as  ID_CARD,
+TO_CHAR(CONCAT(CONCAT(PATIENTS.PRENAME,PATIENTS.NAME),CONCAT(' ',PATIENTS.SURNAME))) AS FULLNAME,
+case when PATIENTS.TEL is null then '-' else PATIENTS.TEL end as TEL,
+case when PATIENTS.MOBILE is null then '-' else PATIENTS.MOBILE end AS MOBLE,
+TRUNC ( MONTHS_BETWEEN (
+		OFH_LIKE.DATETIME,
+		PATIENTS.BIRTHDAY
+	) / 12
+) as AGE,
+OFH_LIKE.OPD_FINANCE_NO,
+TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YYYY') as DATETIME,
+LABCODE_DETAIL.LABCODE_DETAIL_CODE,
+LABCODE_DETAIL.NAME,
+LABRESULT.CHARACTER_RESULT,
+to_char('บ้านเลขที่  '    ||PATIENTS.HOME) as HOME,
+	TAMBON.NAME as TAMBON,
+	DISULTS.DIST_NAME as DISULT ,
+	PROVINCES.PROV_NAME as 	PROVINCE
+
+
+FROM
+	LAB_FINANCE_DETAILS
+INNER JOIN OFH_LIKE ON LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = OFH_LIKE.OPD_FINANCE_NO
+inner join PATIENTS on OFH_LIKE.hn = PATIENTS.hn
+INNER JOIN LABCODES ON LAB_FINANCE_DETAILS.LAB1_LABCODE = LABCODES.LABCODE
+INNER JOIN PLACES ON OFH_LIKE.PLA_PLACECODE = PLACES.PLACECODE
+left join LABRESULT on  LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = LABRESULT.OFH_OPD_FINANCE_NO and LAB_FINANCE_DETAILS.LAB1_LABCODE = LABRESULT.lab1_labcode 
+INNER JOIN LABCODE_DETAIL ON LABRESULT.LABCODE_DETAIL_CODE = LABCODE_DETAIL.LABCODE_DETAIL_CODE
+LEFT JOIN TAMBON ON TAMBON.CODE = PATIENTS.TAMBON
+LEFT JOIN PROVINCES ON PATIENTS.PRO1_PROV_CODE = PROVINCES.PROV_CODE
+LEFT JOIN DISULTS ON PATIENTS.DIS_DIST_CODE = DISULTS.DIST_CODE
+
+WHERE
+		LABRESULT.LAB1_LABCODE IN (
+'VI23',
+'VI023',
+'VI24'
+
+		
+	)
+   and TO_CHAR(OFH_LIKE.DATETIME,'yyyy-mm-dd')  >= TO_CHAR(SYSDATE-7, 'yyyy-mm-dd')
+
+    order by OFH_LIKE.OPD_FINANCE_NO desc
+
+";
+
+
+$objParse = oci_parse ($objConnect, $strSQL);
+oci_execute($objParse,OCI_DEFAULT);
+while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
+
+
+	$a['HN']=$rs_pmk[0];
+    $a['ID_CARD']=$rs_pmk[1];
+    $a['FULLNAME']=$rs_pmk[2];
+    $a['TEL']=$rs_pmk[3];
+    $a['MOBILE']=$rs_pmk[4];
+    $a['AGE']=$rs_pmk[5];
+    $a['OPD_FINANCE_NO']=$rs_pmk[6];
+    $a['DATETIME']=$rs_pmk[7];
+    $a['LABCODE_DETAIL_CODE']=$rs_pmk[8];
+    $a['NAME']=$rs_pmk[9];
+    $a['result']=$rs_pmk[10];
+    $a['HOME']=$rs_pmk[11];
+	$a['TAMBON']=$rs_pmk[12];
+	$a['DISULT']=$rs_pmk[13];
+	$a['PROVINCE']=$rs_pmk[14];
+
+   
+
 	
-// $data_array2 = array("data" => $data);
+	
+	
+	
+
+
+	
+	array_push($data,$a);
+}	
+} elseif($showdata ==  'months'){
+    
+    $data=array();
+
+$strSQL  = "
+SELECT DISTINCT
+OFH_LIKE.HN,
+case when PATIENTS.ID_CARD is null then '-'  
+when PATIENTS.ID_CARD is not null then PATIENTS.ID_CARD  end as  ID_CARD,
+TO_CHAR(CONCAT(CONCAT(PATIENTS.PRENAME,PATIENTS.NAME),CONCAT(' ',PATIENTS.SURNAME))) AS FULLNAME,
+case when PATIENTS.TEL is null then '-' else PATIENTS.TEL end as TEL,
+case when PATIENTS.MOBILE is null then '-' else PATIENTS.MOBILE end AS MOBLE,
+TRUNC ( MONTHS_BETWEEN (
+		OFH_LIKE.DATETIME,
+		PATIENTS.BIRTHDAY
+	) / 12
+) as AGE,
+OFH_LIKE.OPD_FINANCE_NO,
+TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YYYY') as DATETIME,
+LABCODE_DETAIL.LABCODE_DETAIL_CODE,
+LABCODE_DETAIL.NAME,
+LABRESULT.CHARACTER_RESULT,
+to_char('บ้านเลขที่  '    ||PATIENTS.HOME) as HOME,
+	TAMBON.NAME as TAMBON,
+	DISULTS.DIST_NAME as DISULT ,
+	PROVINCES.PROV_NAME as 	PROVINCE
+
+
+FROM
+	LAB_FINANCE_DETAILS
+INNER JOIN OFH_LIKE ON LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = OFH_LIKE.OPD_FINANCE_NO
+inner join PATIENTS on OFH_LIKE.hn = PATIENTS.hn
+INNER JOIN LABCODES ON LAB_FINANCE_DETAILS.LAB1_LABCODE = LABCODES.LABCODE
+INNER JOIN PLACES ON OFH_LIKE.PLA_PLACECODE = PLACES.PLACECODE
+left join LABRESULT on  LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = LABRESULT.OFH_OPD_FINANCE_NO and LAB_FINANCE_DETAILS.LAB1_LABCODE = LABRESULT.lab1_labcode 
+INNER JOIN LABCODE_DETAIL ON LABRESULT.LABCODE_DETAIL_CODE = LABCODE_DETAIL.LABCODE_DETAIL_CODE
+LEFT JOIN TAMBON ON TAMBON.CODE = PATIENTS.TAMBON
+LEFT JOIN PROVINCES ON PATIENTS.PRO1_PROV_CODE = PROVINCES.PROV_CODE
+LEFT JOIN DISULTS ON PATIENTS.DIS_DIST_CODE = DISULTS.DIST_CODE
+
+WHERE
+		LABRESULT.LAB1_LABCODE IN (
+'VI23',
+'VI023',
+'VI24'
+
+		
+	)
+   and TO_CHAR(OFH_LIKE.DATETIME,'yyyy-mm-dd')  >= TO_CHAR(SYSDATE-30, 'yyyy-mm-dd')
+
+    order by OFH_LIKE.OPD_FINANCE_NO desc
+
+";
+
+
+$objParse = oci_parse ($objConnect, $strSQL);
+oci_execute($objParse,OCI_DEFAULT);
+while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
+
+
+	$a['HN']=$rs_pmk[0];
+    $a['ID_CARD']=$rs_pmk[1];
+    $a['FULLNAME']=$rs_pmk[2];
+    $a['TEL']=$rs_pmk[3];
+    $a['MOBILE']=$rs_pmk[4];
+    $a['AGE']=$rs_pmk[5];
+    $a['OPD_FINANCE_NO']=$rs_pmk[6];
+    $a['DATETIME']=$rs_pmk[7];
+    $a['LABCODE_DETAIL_CODE']=$rs_pmk[8];
+    $a['NAME']=$rs_pmk[9];
+    $a['result']=$rs_pmk[10];
+    $a['HOME']=$rs_pmk[11];
+	$a['TAMBON']=$rs_pmk[12];
+	$a['DISULT']=$rs_pmk[13];
+	$a['PROVINCE']=$rs_pmk[14];
+
+   
+
+	
+	
+	
+	
+
+
+	
+	array_push($data,$a);
+}	
+} elseif($showdata ==  'all'){
+    $data=array();
+
+$strSQL  = "
+SELECT DISTINCT
+OFH_LIKE.HN,
+case when PATIENTS.ID_CARD is null then '-'  
+when PATIENTS.ID_CARD is not null then PATIENTS.ID_CARD  end as  ID_CARD,
+TO_CHAR(CONCAT(CONCAT(PATIENTS.PRENAME,PATIENTS.NAME),CONCAT(' ',PATIENTS.SURNAME))) AS FULLNAME,
+case when PATIENTS.TEL is null then '-' else PATIENTS.TEL end as TEL,
+case when PATIENTS.MOBILE is null then '-' else PATIENTS.MOBILE end AS MOBLE,
+TRUNC ( MONTHS_BETWEEN (
+		OFH_LIKE.DATETIME,
+		PATIENTS.BIRTHDAY
+	) / 12
+) as AGE,
+OFH_LIKE.OPD_FINANCE_NO,
+TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YYYY') as DATETIME,
+LABCODE_DETAIL.LABCODE_DETAIL_CODE,
+LABCODE_DETAIL.NAME,
+LABRESULT.CHARACTER_RESULT,
+to_char('บ้านเลขที่  '    ||PATIENTS.HOME) as HOME,
+	TAMBON.NAME as TAMBON,
+	DISULTS.DIST_NAME as DISULT ,
+	PROVINCES.PROV_NAME as 	PROVINCE
+
+
+FROM
+	LAB_FINANCE_DETAILS
+INNER JOIN OFH_LIKE ON LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = OFH_LIKE.OPD_FINANCE_NO
+inner join PATIENTS on OFH_LIKE.hn = PATIENTS.hn
+INNER JOIN LABCODES ON LAB_FINANCE_DETAILS.LAB1_LABCODE = LABCODES.LABCODE
+INNER JOIN PLACES ON OFH_LIKE.PLA_PLACECODE = PLACES.PLACECODE
+left join LABRESULT on  LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = LABRESULT.OFH_OPD_FINANCE_NO and LAB_FINANCE_DETAILS.LAB1_LABCODE = LABRESULT.lab1_labcode 
+INNER JOIN LABCODE_DETAIL ON LABRESULT.LABCODE_DETAIL_CODE = LABCODE_DETAIL.LABCODE_DETAIL_CODE
+LEFT JOIN TAMBON ON TAMBON.CODE = PATIENTS.TAMBON
+LEFT JOIN PROVINCES ON PATIENTS.PRO1_PROV_CODE = PROVINCES.PROV_CODE
+LEFT JOIN DISULTS ON PATIENTS.DIS_DIST_CODE = DISULTS.DIST_CODE
+
+WHERE
+		LABRESULT.LAB1_LABCODE IN (
+'VI23',
+'VI023',
+'VI24'
+
+		
+	)
+	and OFH_LIKE.DATETIME > to_date('2021-01-01', 'yyyy-mm-dd')
+
+    order by OFH_LIKE.OPD_FINANCE_NO desc
+
+";
+
+
+$objParse = oci_parse ($objConnect, $strSQL);
+oci_execute($objParse,OCI_DEFAULT);
+while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
+
+
+	$a['HN']=$rs_pmk[0];
+    $a['ID_CARD']=$rs_pmk[1];
+    $a['FULLNAME']=$rs_pmk[2];
+    $a['TEL']=$rs_pmk[3];
+    $a['MOBILE']=$rs_pmk[4];
+    $a['AGE']=$rs_pmk[5];
+    $a['OPD_FINANCE_NO']=$rs_pmk[6];
+    $a['DATETIME']=$rs_pmk[7];
+    $a['LABCODE_DETAIL_CODE']=$rs_pmk[8];
+    $a['NAME']=$rs_pmk[9];
+    $a['result']=$rs_pmk[10];
+    $a['HOME']=$rs_pmk[11];
+	$a['TAMBON']=$rs_pmk[12];
+	$a['DISULT']=$rs_pmk[13];
+	$a['PROVINCE']=$rs_pmk[14];
+
+   
+
+	
+	
+	
+	
+
+
+	
+	array_push($data,$a);
+}	
+
+}
+
+	
+
 
 echo json_encode($data);
 

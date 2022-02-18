@@ -28,9 +28,7 @@ include 'connect.php';
             
             WHERE
                 LABRESULT.LAB1_LABCODE IN (
-            'VI23',
-	    'VI023',
-	    'VI24'
+            'VI23'
                 
               )
             

@@ -7,7 +7,7 @@
 
           <h2>
             <v-icon size="30"> mdi-database-clock </v-icon>รายงานผล LAB COVID-19
-            จาก PMK
+            จาก PMK ({{ showtitle }} จำนวน {{ showcountdata }} ราย)
           </h2>
           <v-spacer></v-spacer>
           <v-btn color="#FF8882" dark x-large
@@ -27,8 +27,44 @@
             <v-icon medium>mdi-refresh </v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-text
-          ><div>
+        <v-card-text>
+          <div>
+            <v-col cols="12">
+              <v-radio-group v-model="showdata" row @change="changeshowdata">
+                <v-radio value="day">
+                  <template v-slot:label>
+                    <div>
+                      แสดงข้อมูลตาม
+                      <strong :class="textcolorday">วันล่าสุด</strong>
+                    </div>
+                  </template></v-radio
+                >
+                <v-radio value="weeks">
+                  <template v-slot:label>
+                    <div>
+                      แสดงข้อมูล
+                      <strong :class="textcolorweeks">ย้อนหลัง 1 สปดาห์</strong>
+                    </div>
+                  </template></v-radio
+                >
+                <v-radio value="months">
+                  <template v-slot:label>
+                    <div>
+                      แสดงข้อมูล
+                      <strong :class="textcolormonths">ย้อนหลัง 1 เดือน</strong>
+                    </div>
+                  </template></v-radio
+                >
+                <v-radio value="all">
+                  <template v-slot:label>
+                    <div>
+                      แสดงข้อมูล
+                      <strong :class="textcolorall">ทั้งหมด</strong>
+                    </div>
+                  </template></v-radio
+                >
+              </v-radio-group>
+            </v-col>
             <vue-good-table
               :line-numbers="true"
               :search-options="{ enabled: true, placeholder: 'ค้นหา' }"
@@ -47,11 +83,11 @@
               <template slot="table-row" slot-scope="props">
                 <span v-if="props.column.field == 'result'">
                   <span
-                    v-if="props.row.result == 'Not Detected'"
-                    style="font-weight: bold; color: green"
+                    v-if="props.row.result == 'Detected'"
+                    style="font-weight: bold; color: red"
                     >{{ props.row.result }}</span
                   >
-                  <span v-else style="font-weight: bold; color: red">{{
+                  <span v-else style="font-weight: bold; color: green">{{
                     props.row.result
                   }}</span>
                 </span>
@@ -224,6 +260,26 @@ export default {
           field: 'DATEADMIT',
           sortable: false,
         },
+        {
+          label: 'ที่อยู่',
+          field: 'HOME',
+          sortable: false,
+        },
+        {
+          label: 'ตำบล',
+          field: 'TAMBON',
+          sortable: false,
+        },
+        {
+          label: 'อำเภอ',
+          field: 'DISULT',
+          sortable: false,
+        },
+        {
+          label: 'จังหวัด',
+          field: 'PROVINCE',
+          sortable: false,
+        },
       ],
       rows: [],
       lineday: '',
@@ -232,9 +288,17 @@ export default {
       lineday_yes_covid: '',
       loadlineday: false,
       lineday_all_covid: '',
+      showdata: 'day',
+      textcolorday: 'primary--text',
+      textcolorweeks: 'primary--text',
+      textcolormonths: 'primary--text',
+      textcolorall: 'primary--text',
+      showtitle: '',
+      showcountdata: '0',
     }
   },
   mounted() {
+    this.changeradiocolor()
     this.fetch_lab()
     this.chart_line()
   },
@@ -244,16 +308,54 @@ export default {
     async fetch_lab() {
       this.dialog = true
       await axios
-        .get(`${this.$axios.defaults.baseURL}lab_pui.php`)
+        .get(`${this.$axios.defaults.baseURL}lab_pui.php`, {
+          params: {
+            showdata: this.showdata,
+          },
+        })
         .then((response) => {
           this.rows = response.data
           this.dialog = false
+          this.showcountdata = this.rows.length
         })
+    },
+
+    changeshowdata() {
+      this.changeradiocolor()
+      this.fetch_lab()
     },
     refresh() {
       this.fetch_lab()
       this.chart_line()
       this.chart_risk()
+    },
+    changeradiocolor() {
+      this.showcountdata = ''
+      if (this.showdata == 'day') {
+        this.textcolorday = 'success--text'
+        this.textcolorweeks = 'primary--text'
+        this.textcolormonths = 'primary--text'
+        this.textcolorall = 'primary--text'
+        this.showtitle = 'รายวัน'
+      } else if (this.showdata == 'weeks') {
+        this.textcolorday = 'primary--text'
+        this.textcolorweeks = 'success--text'
+        this.textcolormonths = 'primary--text'
+        this.textcolorall = 'primary--text'
+        this.showtitle = 'รายสัปดาห์'
+      } else if (this.showdata == 'months') {
+        this.textcolorday = 'primary--text'
+        this.textcolorweeks = 'primary--text'
+        this.textcolormonths = 'success--text'
+        this.textcolorall = 'primary--text'
+        this.showtitle = 'รายเดือน'
+      } else if (this.showdata == 'all') {
+        this.textcolorday = 'primary--text'
+        this.textcolorweeks = 'primary--text'
+        this.textcolormonths = 'primary--text'
+        this.textcolorall = 'success--text'
+        this.showtitle = 'ทั้งหมด'
+      }
     },
 
     //chart line + bar

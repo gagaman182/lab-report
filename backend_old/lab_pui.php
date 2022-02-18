@@ -1,0 +1,124 @@
+<?php
+	 header('Access-Control-Allow-Origin: *');
+   
+
+include 'connect.php';
+// $opdno = $_GET["opdno"];
+
+
+
+
+$data=array();
+
+$strSQL  = "SELECT DISTINCT
+OFH_LIKE.HN,
+case when PATIENTS.ID_CARD is null then '-'  
+when PATIENTS.ID_CARD is not null then PATIENTS.ID_CARD  end as  ID_CARD,
+TO_CHAR(CONCAT(CONCAT(PATIENTS.PRENAME,PATIENTS.NAME),CONCAT(' ',PATIENTS.SURNAME))) AS FULLNAME,
+case when PATIENTS.TEL is null then '-' else PATIENTS.TEL end as TEL,
+case when PATIENTS.MOBILE is null then '-' else PATIENTS.MOBILE end AS MOBLE,
+TRUNC ( MONTHS_BETWEEN (
+		OFH_LIKE.DATETIME,
+		PATIENTS.BIRTHDAY
+	) / 12
+) as AGE,
+OFH_LIKE.OPD_FINANCE_NO,
+TO_CHAR(OFH_LIKE.DATETIME,'DD-MM-YYYY') as DATETIME,
+LABCODE_DETAIL.LABCODE_DETAIL_CODE,
+LABCODE_DETAIL.NAME,
+LABRESULT.CHARACTER_RESULT,
+	ADMITWARD.PLA_PLACECODE AS WARD,
+ADMITWARD.HALFPLACE,
+TO_CHAR(ADMITWARD.DATEADMIT,'DD-MM-YYYY') as DATEADMIT
+	
+
+
+FROM
+	LAB_FINANCE_DETAILS
+INNER JOIN OFH_LIKE ON LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = OFH_LIKE.OPD_FINANCE_NO
+inner join PATIENTS on OFH_LIKE.hn = PATIENTS.hn
+INNER JOIN LABCODES ON LAB_FINANCE_DETAILS.LAB1_LABCODE = LABCODES.LABCODE
+INNER JOIN PLACES ON OFH_LIKE.PLA_PLACECODE = PLACES.PLACECODE
+left join LABRESULT on  LAB_FINANCE_DETAILS.OFH_OPD_FINANCE_NO = LABRESULT.OFH_OPD_FINANCE_NO and LAB_FINANCE_DETAILS.LAB1_LABCODE = LABRESULT.lab1_labcode 
+INNER JOIN LABCODE_DETAIL ON LABRESULT.LABCODE_DETAIL_CODE = LABCODE_DETAIL.LABCODE_DETAIL_CODE
+LEFT JOIN (SELECT
+	IPDTRANS.AN,
+	IPDTRANS.HN,
+	IPDTRANS.PLA_PLACECODE,
+ PLACES.HALFPLACE,
+	IPDTRANS.DATEADMIT
+FROM
+	IPDTRANS
+INNER JOIN PLACES ON 	IPDTRANS.PLA_PLACECODE = PLACES.PLACECODE
+INNER JOIN (SELECT
+	IPDTRANS.HN,
+	MAX (IPDTRANS.AN) AS AN
+FROM
+	IPDTRANS
+WHERE
+	IPDTRANS.DATEADMIT > TO_DATE ('2021/01/01', 'yyyy/mm/dd')
+GROUP BY
+	IPDTRANS.HN)MAXAN ON IPDTRANS.AN = MAXAN.AN
+WHERE
+IPDTRANS.DATEADMIT > TO_DATE ('2021/01/01', 'yyyy/mm/dd'))ADMITWARD ON OFH_LIKE.HN = ADMITWARD.HN
+
+WHERE
+		LABRESULT.LAB1_LABCODE IN (
+'VI020-F'
+		
+	)
+   
+
+    order by OFH_LIKE.OPD_FINANCE_NO desc
+
+
+
+
+
+
+
+
+
+
+
+
+	
+";
+//and DISEASE_WAREHOUSE.HN = '".$hn."'
+
+$objParse = oci_parse ($objConnect, $strSQL);
+oci_execute($objParse,OCI_DEFAULT);
+while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
+
+
+	$a['HN']=$rs_pmk[0];
+    $a['ID_CARD']=$rs_pmk[1];
+    $a['FULLNAME']=$rs_pmk[2];
+    $a['TEL']=$rs_pmk[3];
+    $a['MOBILE']=$rs_pmk[4];
+    $a['AGE']=$rs_pmk[5];
+    $a['OPD_FINANCE_NO']=$rs_pmk[6];
+    $a['DATETIME']=$rs_pmk[7];
+    $a['LABCODE_DETAIL_CODE']=$rs_pmk[8];
+    $a['NAME']=$rs_pmk[9];
+    $a['result']=$rs_pmk[10];
+    $a['WARD']=$rs_pmk[11];
+    $a['HALFPLACE']=$rs_pmk[12];
+    $a['DATEADMIT']=$rs_pmk[13];
+
+
+	
+	array_push($data,$a);
+}	
+	
+// $data_array2 = array("data" => $data);
+
+echo json_encode($data);
+
+oci_close($objConnect);
+
+
+
+
+
+?>
