@@ -6,8 +6,10 @@
           <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
           <h2>
-            <v-icon size="30"> mdi-database-clock </v-icon>รายงานผล LAB RAPID
-            จาก PMK ({{ showtitle }} จำนวน {{ showcountdata }} ราย)
+            <v-icon size="30"> mdi-biohazard </v-icon>รายงานผล LAB ATK ({{
+              showtitle
+            }}
+            จำนวน {{ showcountdata }} ราย)
           </h2>
           <v-spacer></v-spacer>
           <v-btn color="#51c4d3" dark x-large
@@ -108,8 +110,8 @@
 
           <h2>
             <v-icon size="30"> mdi-chart-bell-curve-cumulative </v-icon
-            >กราฟแสดงจำนวนผู้ได้รับการตรวจ LAB RAPID ทั้งหมด ต่อวัน(2 สัปดาห์
-            ล่าสุด)
+            >กราฟเส้นแสดงจำนวนผู้ได้รับการตรวจ LAB ATK
+            <u> ( {{ showcharttitle }} )</u>
           </h2>
           <v-spacer></v-spacer>
           <!-- <v-btn
@@ -122,8 +124,29 @@
             dark
           >
             <v-icon medium>mdi-refresh </v-icon>
-          </v-btn> --> </v-toolbar
-        ><chart_line_rapid
+          </v-btn> -->
+        </v-toolbar>
+        <v-col cols="12">
+          <v-btn
+            class="ma-2"
+            outlined
+            color="indigo"
+            @click="chartbtn_1_click"
+            v-model="chartbtn"
+          >
+            แสดงรายวัน
+          </v-btn>
+          <v-btn
+            class="ma-2"
+            outlined
+            color="indigo"
+            @click="chartbtn_2_click"
+            v-model="chartbtn"
+          >
+            แสดงรายสัปดาห์
+          </v-btn>
+        </v-col>
+        <chart_line_rapid
           v-if="loadlineday"
           :lineday_datetime="lineday_datetime"
           :lineday_no_covid="lineday_no_covid"
@@ -139,8 +162,8 @@
 
           <h2>
             <v-icon size="30"> mdi-chart-box </v-icon
-            >กราฟแสดงจำนวนผู้ได้รับการตรวจ LAB RAPID แสดงตามผลการตรวจ ต่อวัน (2
-            สัปดาห์ ล่าสุด)
+            >กราฟแท่งแสดงจำนวนผู้ได้รับการตรวจ LAB ATK
+            <u> ( {{ showcharttitle }} )</u>
           </h2>
           <v-spacer></v-spacer>
           <!-- <v-btn
@@ -153,8 +176,29 @@
             dark
           >
             <v-icon medium>mdi-refresh </v-icon>
-          </v-btn> --> </v-toolbar
-        ><chart_bar_rapid
+          </v-btn> -->
+        </v-toolbar>
+        <v-col cols="12">
+          <v-btn
+            class="ma-2"
+            outlined
+            color="indigo"
+            @click="chartbtn_1_click"
+            v-model="chartbtn"
+          >
+            แสดงรายวัน
+          </v-btn>
+          <v-btn
+            class="ma-2"
+            outlined
+            color="indigo"
+            @click="chartbtn_2_click"
+            v-model="chartbtn"
+          >
+            แสดงรายสัปดาห์
+          </v-btn>
+        </v-col>
+        <chart_bar_rapid
           v-if="loadlineday"
           :lineday_datetime="lineday_datetime"
           :lineday_no_covid="lineday_no_covid"
@@ -280,6 +324,8 @@ export default {
       textcolorall: 'primary--text',
       showtitle: '',
       showcountdata: '0',
+      chartbtn: 'days',
+      showcharttitle: 'รายวัน',
     }
   },
   mounted() {
@@ -344,8 +390,13 @@ export default {
 
     //chart line + bar
     async chart_line() {
+      this.dialog = true
       await axios
-        .get(`${this.$axios.defaults.baseURL}chart_line_month_rapid.php`)
+        .get(`${this.$axios.defaults.baseURL}chart_line_month_rapid.php`, {
+          params: {
+            chartbtn: this.chartbtn,
+          },
+        })
         .then((response) => {
           this.loadlineday = true
           this.lineday = response.data
@@ -354,7 +405,20 @@ export default {
           this.lineday_no_covid = this.lineday.map((item) => item.no_covid)
           this.lineday_yes_covid = this.lineday.map((item) => item.yes_covid)
           this.lineday_all_covid = this.lineday.map((item) => item.all_covid)
+          this.dialog = false
         })
+    },
+    chartbtn_1_click() {
+      this.chartbtn = 'days'
+      this.loadlineday = false
+      this.showcharttitle = 'รายวัน'
+      this.chart_line()
+    },
+    chartbtn_2_click() {
+      this.chartbtn = 'weeks'
+      this.loadlineday = false
+      this.showcharttitle = 'รายสัปดาห์'
+      this.chart_line()
     },
   },
 }

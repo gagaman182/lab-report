@@ -40,7 +40,7 @@
     
     </v-system-bar>
    
-   
+<!--    
  <v-btn-toggle
         v-model="text"
         tile
@@ -48,11 +48,11 @@
         group
       >
         <v-btn value="left" class="headline"  >
-          <NuxtLink to="/">รายงานผล LAB </NuxtLink>
+          <NuxtLink to="/">รายงานผลตรวจแล็ป (RTPCR) </NuxtLink>
         </v-btn>
 
         <v-btn value="left" class="headline"  >
-          <NuxtLink to="/lab-rapid">รายงานผล LAB RAPID </NuxtLink>
+          <NuxtLink to="/lab-rapid">รายงานผลตรวจแล็ป (ATK) </NuxtLink>
         </v-btn>
 
         <v-btn value="center" class="headline">
@@ -60,19 +60,26 @@
         </v-btn>
 
         
-      </v-btn-toggle> 
+      </v-btn-toggle>  -->
         
   
-     
+      <v-toolbar-items class="hidden-sm-and">
+      <v-col cols="12" class="headbtn"> 
+      
+          <v-btn flat to="/" x-large  outlined color="#F1D00A"  class="subbtn" nuxt > LAB RTPCR </v-btn>
+          <v-btn flat to="/lab-rapid" x-large  outlined color="#F1D00A" class="subbtn"  nuxt> LAB ATK </v-btn>
+          <v-btn flat to="/add-code" x-large  outlined color="#F1D00A" class="subbtn" nuxt> SATCODE </v-btn></v-col>
+        
+ </v-toolbar-items>
        
     <v-row>
          
-        <v-col col="12" md="6">
+        <v-col col="6"  class="headbtn">
           <div>
             <v-card-title color="orange lighten-2">
                           ผู้ใช้งานระบบ : <v-chip
                   class="ma-2"
-                  color="#fa1e0e"
+                  color="#F76E11"
                   outlined
                   pill
                 >
@@ -84,7 +91,7 @@
             </v-card-title>
           </div>
         </v-col>
-        <v-col col="12" md="6">
+        <v-col col="6" >
           <div align="end">
             <!-- <v-btn class="ma-1" color="error" plain x-large @click="logout()">
               ออกจากระบบ
@@ -226,4 +233,11 @@ export default {
   font-style: bold;
   font-weight: 40000;
 }
+.headbtn {
+  margin-left: 60px;
+  }
+ .subbtn {
+  margin-right: 10px;
+  }
+   
 </style>

@@ -295,7 +295,7 @@
           <v-card-text><ic_view_srrt></ic_view_srrt> </v-card-text>
         </v-card>
       </v-tab-item>
-       <v-tab-item>
+      <v-tab-item>
         <v-card flat>
           <v-card-text><detect_calendar></detect_calendar> </v-card-text>
         </v-card>
@@ -311,14 +311,14 @@ import table_satcode from '~/components/table_satcode.vue'
 import table_all from '~/components/table_all.vue'
 import chart_column from '~/components/chart_column.vue'
 import ic_view_srrt from '~/components/ic_view_srrt.vue'
- import detect_calendar from '~/components/detect_calendar.vue'
+import detect_calendar from '~/components/detect_calendar.vue'
 export default {
   components: {
     table_satcode,
     table_all,
     chart_column,
     ic_view_srrt,
-     detect_calendar
+    detect_calendar,
   },
   data() {
     return {
@@ -360,7 +360,7 @@ export default {
         { tab: 'SATCODEทั้งหมด', icon: 'mdi-card-account-details-outline' },
         { tab: 'กราฟตามประเภทความเสี่ยง', icon: 'mdi-chart-bar-stacked ' },
         { tab: 'ic', icon: 'mdi-tablet-dashboard  ' },
-        { tab: 'ปฏิทิน', icon: 'mdi-calendar   ' },
+        { tab: 'ปฏิทินสรุปยอดการตรวจ', icon: 'mdi-calendar   ' },
       ],
       columnday: '',
       columnday_day: '',
