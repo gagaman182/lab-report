@@ -78,7 +78,7 @@ while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
 }elseif($chartbtn ==  'weeks'){	
   $sqlipd = "SELECT * from (
     SELECT 
-                  to_char(OFH_LIKE.DATETIME,'WW') AS DATETIME,
+                   to_char(OFH_LIKE.DATETIME,'yyyy-MM-WW')  AS DATETIME,
                 count(CASE WHEN LABRESULT.CHARACTER_RESULT  LIKE '%Negative%' THEN OFH_LIKE.HN END) AS no_covid,
                 count(CASE WHEN LABRESULT.CHARACTER_RESULT LIKE '%Positive%'  THEN OFH_LIKE.HN END) AS yes_covid,
                 count(OFH_LIKE.HN) as all_covid
@@ -104,9 +104,8 @@ while($rs_pmk=oci_fetch_array($objParse,OCI_BOTH)){
                 
                 
                 
-                 GROUP BY    to_char(OFH_LIKE.DATETIME,'WW')
-     ORDER BY  to_char(OFH_LIKE.DATETIME,'WW') desc
-    )lab_week 
+                 GROUP BY    to_char(OFH_LIKE.DATETIME,'yyyy-MM-WW')
+     ORDER BY  to_char(OFH_LIKE.DATETIME,'yyyy-MM-WW') desc )lab_week 
     where rownum <= 14
     ORDER BY datetime asc
   ";

@@ -417,7 +417,7 @@ export default {
     chartbtn_2_click() {
       this.chartbtn = 'weeks'
       this.loadlineday = false
-      this.showcharttitle = 'รายสัปดาห์'
+      this.showcharttitle = 'รายสัปดาห์ (ปี-เดือน-สัปดาห์)'
       this.chart_line()
     },
   },
